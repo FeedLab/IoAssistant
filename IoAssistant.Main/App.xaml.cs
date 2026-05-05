@@ -16,7 +16,6 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        _ = Task.Run(InitializeSensorDevices);
 
         var window = new Window(new AppShell());
 
@@ -31,12 +30,10 @@ public partial class App : Application
         return window;
     }
 
-    private async void InitializeSensorDevices()
+    private async Task InitializeSensorDevices()
     {
         try
         {
-            await Task.Delay(1000);
-        
             var deviceService = AppService.GetRequiredService<DeviceService>();
             var modBusClientService = AppService.GetRequiredService<ModBusClientService>();
 
@@ -51,11 +48,14 @@ public partial class App : Application
         
             var sensorDevice23 = new SensorDevice(modBusClient, "In Office 23", deviceId23,  registerStart, registersToRead, DeviceDirection.Input,
                 "Temperature & Humidity & CO2");
+            deviceService.AddDevice(sensorDevice23);
+
             var sensorHumidity = new Sensor(sensorDevice23, 0)
             {
                 Name = "Humidity",
                 SensorType = "Humidity",
-                NumberOfDecimals = 1
+                NumberOfDecimals = 1,
+                Unit = "RH"
             };
             sensorDevice23.AddSensor(sensorHumidity);
 
@@ -63,7 +63,8 @@ public partial class App : Application
             {
                 Name = "Temperature",
                 SensorType = "Temperature",
-                NumberOfDecimals = 1
+                NumberOfDecimals = 1,
+                Unit = "C"
             };
             sensorDevice23.AddSensor(sensorTemp);
 
@@ -71,19 +72,22 @@ public partial class App : Application
             {
                 Name = "CO2",
                 SensorType = "CO2",
-                NumberOfDecimals = 0
+                NumberOfDecimals = 0,
+                Unit = "ppm"
             };
             sensorDevice23.AddSensor(sensorCo2);
-            deviceService.AddDevice(sensorDevice23);
 
         
             var sensorDevice52 = new SensorDevice(modBusClient, "Outdoor 52", deviceId52,  registerStart, 6, DeviceDirection.Input,
                 "Temperature & Humidity & CO2");
+            deviceService.AddDevice(sensorDevice52);
+
             sensorHumidity = new Sensor(sensorDevice52, 0)
             {
                 Name = "Humidity",
                 SensorType = "Humidity",
-                NumberOfDecimals = 1
+                NumberOfDecimals = 1,
+                Unit = "RH"
             };
             sensorDevice52.AddSensor(sensorHumidity);
 
@@ -91,7 +95,8 @@ public partial class App : Application
             {
                 Name = "Temperature",
                 SensorType = "Temperature",
-                NumberOfDecimals = 1
+                NumberOfDecimals = 1,
+                Unit = "C"
             };
             sensorDevice52.AddSensor(sensorTemp);
 
@@ -99,10 +104,10 @@ public partial class App : Application
             {
                 Name = "CO2",
                 SensorType = "CO2",
-                NumberOfDecimals = 0
+                NumberOfDecimals = 0,
+                Unit = "ppm"
             };
             sensorDevice52.AddSensor(sensorCo2);
-            deviceService.AddDevice(sensorDevice52);
         }
         catch (Exception e)
         {
@@ -116,6 +121,8 @@ public partial class App : Application
 
         if (_initTask is not null)
             await _initTask;
+
+        await InitializeSensorDevices();
 
         var deviceService = AppService.GetRequiredService<DeviceService>();
 

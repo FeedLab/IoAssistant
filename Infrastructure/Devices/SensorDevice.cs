@@ -125,6 +125,8 @@ public class SensorDevice : DeviceBase, IDisposable
             logger.LogWarning($"Sensor with index {sensor.RegisterAddress} already exists. Skipping addition.");
             return;
         }
+        
+        WeakReferenceMessenger.Default.Send(new OnSensorAddedMessage(sensor));
     }
 
     public List<Sensor> Sensors => sensorInputs.Values.ToList();
@@ -156,7 +158,7 @@ public partial class Sensor : ObservableObject
 
     [ObservableProperty] private decimal registerValue;
 
-    [ObservableProperty] private bool isRegisterValueHighlighted;
+    [ObservableProperty] private string unit = "%";
 
     public Sensor(SensorDevice sensorDevice, byte registerAddress)
     {
