@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tabView="http://schemas.syncfusion.com/maui"
+             xmlns:views="clr-namespace:IoAssistant.Device.Desktop.Views"
+             x:Class="IoAssistant.Device.Desktop.MainPage_Desktop">
+
+    <tabView:SfTabView
+        x:Name="TabView"
+        Margin="0,0"
+        EnableSwiping="False"
+        TabBarPlacement="Bottom"
+        TabWidthMode="SizeToContent"
+        TabBarBackground="#CC000000"
+        IndicatorBackground="#4CAF50"
+        SelectionChanged="TabView_OnSelectionChanged">
+        <tabView:SfTabView.Items>
+            <tabView:SfTabItem
+                Header="I/O Device"
+                x:Name="Device"
+                TextColor="White"
+                FontSize="14">
+                <tabView:SfTabItem.Content>
+                    <Grid BackgroundColor="Transparent">
+                        <ScrollView Orientation="Vertical">
+                            <views:DeviceView Margin="0,0,0,0" />
+                        </ScrollView>
+                    </Grid>
+                </tabView:SfTabItem.Content>
+            </tabView:SfTabItem>
+        </tabView:SfTabView.Items>
+    </tabView:SfTabView>
+
+
+</ContentPage>

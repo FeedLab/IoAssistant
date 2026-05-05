@@ -1,0 +1,21 @@
+﻿using IoAssistant.Infrastructure.ViewModels;
+using Syncfusion.Maui.TabView;
+
+namespace IoAssistant.Device.Desktop;
+
+public partial class MainPage_Desktop : ContentPage
+{
+    private readonly MainPageViewModel viewModel;
+    
+    public MainPage_Desktop(MainPageViewModel viewModel)
+    {
+        this.viewModel = viewModel;
+        InitializeComponent();
+        
+        BindingContext = viewModel;
+    }
+
+    private void TabView_OnSelectionChanged(object? sender, TabSelectionChangedEventArgs e)
+    {
+    }
+}

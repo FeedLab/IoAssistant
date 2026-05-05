@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:listView="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             xmlns:devices1="clr-namespace:IoAssistant.Infrastructure.Devices;assembly=Infrastructure"
+             xmlns:vm="clr-namespace:IoAssistant.Infrastructure.ViewModels;assembly=Infrastructure"
+             x:Class="IoAssistant.Device.Desktop.Views.DeviceView">
+
+    <listView:SfListView
+        x:Name="DeviceList"
+        Margin="12,24"
+        ItemsSource="{Binding SensorList}"
+        SelectionMode="Single"
+        Background="Transparent"
+        AutoFitMode="DynamicHeight">
+
+        <listView:SfListView.ItemTemplate>
+            <DataTemplate x:DataType="vm:DeviceSensorViewModel">
+                <Grid Padding="12,8"
+                      ColumnDefinitions="Auto,*,Auto"
+                      RowDefinitions="Auto,Auto,Auto">
+
+                    <!-- Device ID badge -->
+                    <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                            BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                            StrokeShape="RoundRectangle 6"
+                            Stroke="Transparent"
+                            WidthRequest="40" HeightRequest="40"
+                            Margin="0,0,12,0"
+                            VerticalOptions="Center">
+                        <Label Text="{Binding SensorDevice.DeviceId}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#1565C0, Dark=White}" />
+                    </Border>
+
+                    <!-- Name -->
+                    <Label Grid.Row="0" Grid.Column="1"
+                           Text="{Binding SensorDevice.Name}"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           VerticalOptions="End" />
+
+                    <!-- Description -->
+                    <Label Grid.Row="1" Grid.Column="1"
+                           Text="{Binding SensorDevice.Description}"
+                           FontSize="12"
+                           TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}"
+                           VerticalOptions="Start" />
+
+                    <!-- Direction + polling + expand chevron -->
+                    <VerticalStackLayout Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                                         VerticalOptions="Center"
+                                         HorizontalOptions="End"
+                                         Spacing="2">
+                        <Label Text="{Binding SensorDevice.Direction}"
+                               FontSize="11"
+                               HorizontalOptions="End"
+                               TextColor="{AppThemeBinding Light=#1976D2, Dark=#90CAF9}" />
+                        <Label FontSize="11"
+                               HorizontalOptions="End"
+                               TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding SensorDevice.PollingFrequency}" />
+                                    <Span Text=" ms" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Button Text="&#x25BC;"
+                                FontSize="10"
+                                Padding="4,0"
+                                BackgroundColor="Transparent"
+                                TextColor="{AppThemeBinding Light=#555, Dark=#AAA}"
+                                HorizontalOptions="End"
+                                Clicked="OnExpandClicked" />
+                    </VerticalStackLayout>
+
+                    <!-- Sensor list (collapsible) -->
+                    <listView:SfListView
+                        Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                        IsVisible="{Binding SensorDevice.IsExpanded}"
+                        ItemsSource="{Binding SensorDevice.Sensors}"
+                        SelectionMode="None"
+                        AutoFitMode="DynamicHeight"
+                        Margin="52,4,0,4">
+                        <listView:SfListView.ItemTemplate>
+                            <DataTemplate x:DataType="devices1:Sensor">
+                                <Grid Padding="8,4"
+                                      ColumnDefinitions="*,Auto,Auto"
+                                      RowDefinitions="Auto">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Name}"
+                                           FontSize="13"
+                                           VerticalOptions="Center" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding SensorType}"
+                                           FontSize="11"
+                                           Margin="0,0,12,0"
+                                           TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}"
+                                           VerticalOptions="Center" />
+                                    <Label Grid.Column="2"
+                                           Text="{Binding RegisterValue}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label"
+                                                         Binding="{Binding IsRegisterValueHighlighted}"
+                                                         Value="True">
+                                                <Setter Property="TextColor" Value="Orange" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                            </DataTemplate>
+                        </listView:SfListView.ItemTemplate>
+                    </listView:SfListView>
+
+                </Grid>
+            </DataTemplate>
+        </listView:SfListView.ItemTemplate>
+    </listView:SfListView>
+
+</ContentView>

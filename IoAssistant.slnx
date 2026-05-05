@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Desktop/Desktop.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" />
+  <Project Path="IoAssistant.Main/IoAssistant.Main.csproj" />
+  <Project Path="Phone/Phone.csproj" />
+</Solution>
