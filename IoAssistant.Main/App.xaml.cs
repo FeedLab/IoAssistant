@@ -6,7 +6,8 @@ namespace IoAssistant.Main;
 
 public partial class App : Application
 {
-    private ModBusRtuClient? modBusClient;
+    private ModBusRtuClient modBusRtuClient;
+    private ModBusTcpClient modBusTcpClient;
     private Task? _initTask;
 
     public App()
@@ -16,7 +17,6 @@ public partial class App : Application
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-
         var window = new Window(new AppShell());
 
         if (DeviceInfo.Platform == DevicePlatform.WinUI ||
@@ -37,16 +37,44 @@ public partial class App : Application
             var deviceService = AppService.GetRequiredService<DeviceService>();
             var modBusClientService = AppService.GetRequiredService<ModBusClientService>();
 
-            modBusClient = new ModBusRtuClient();
             byte registerStart = 0;
             byte registersToRead = 12;
             byte deviceId23 = 23;
             byte deviceId52 = 52;
+                
+            modBusRtuClient = new ModBusRtuClient();
+            modBusClientService.AddDevice(modBusRtuClient);
 
-            modBusClientService.AddDevice(modBusClient);
+            modBusTcpClient = new ModBusTcpClient();
+            modBusClientService.AddDevice(modBusTcpClient);
 
-        
-            var sensorDevice23 = new SensorDevice(modBusClient, "In Office 23", deviceId23,  registerStart, registersToRead, DeviceDirection.Input,
+            ushort startVfd = 4096;
+            var sensorDeviceVfd = new SensorDevice(modBusTcpClient, "Vfd Fan System", 1, startVfd, 12,
+                DeviceDirection.Input, 3000, 1000, "Temperature & Humidity & CO2");
+            deviceService.AddDevice(sensorDeviceVfd);
+
+            var frequencyRegister = (ushort)(startVfd + 1);
+            var sensorFrequencyHz = new Sensor(sensorDeviceVfd, frequencyRegister)
+            {
+                Name = "Frequency",
+                SensorType = "Frequency",
+                NumberOfDecimals = 2,
+                Unit = "Hz"
+            };
+            sensorDeviceVfd.AddSensor(sensorFrequencyHz);
+            
+            var powerUsageKwRegister = (ushort)(startVfd + 5);
+            var sensorPowerUsageKw = new Sensor(sensorDeviceVfd, powerUsageKwRegister)
+            {
+                Name = "Power Usage",
+                SensorType = "Power",
+                NumberOfDecimals = 1,
+                Unit = "kW"
+            };
+            sensorDeviceVfd.AddSensor(sensorPowerUsageKw);
+            
+            var sensorDevice23 = new SensorDevice(modBusRtuClient, "In Office 23", deviceId23, registerStart,
+                registersToRead, DeviceDirection.Input, 1000, 1000,
                 "Temperature & Humidity & CO2");
             deviceService.AddDevice(sensorDevice23);
 
@@ -77,8 +105,9 @@ public partial class App : Application
             };
             sensorDevice23.AddSensor(sensorCo2);
 
-        
-            var sensorDevice52 = new SensorDevice(modBusClient, "Outdoor 52", deviceId52,  registerStart, 6, DeviceDirection.Input,
+
+            var sensorDevice52 = new SensorDevice(modBusRtuClient, "Outdoor 52", deviceId52, registerStart, 6,
+                DeviceDirection.Input, 1000, 1000,
                 "Temperature & Humidity & CO2");
             deviceService.AddDevice(sensorDevice52);
 
@@ -111,7 +140,6 @@ public partial class App : Application
         }
         catch (Exception e)
         {
-            
         }
     }
 
@@ -128,16 +156,22 @@ public partial class App : Application
 
         try
         {
-            if (modBusClient is not null)
             {
-                modBusClient.Start();
+                modBusRtuClient.Start();
 
-                foreach (var device in deviceService.GetDevices())
+                foreach (var device in deviceService.GetDevices<ModBusRtuClient>())
                 {
                     device.Start();
                 }
+            }
+            
+            {
+                modBusTcpClient.Start();
 
-                //     modBusClient.Stop();
+                foreach (var device in deviceService.GetDevices<ModBusTcpClient>())
+                {
+                    device.Start();
+                }
             }
 
             // if (modBusClient is not null)

@@ -28,15 +28,17 @@ public abstract partial class DeviceBase : ObservableObject
 
     [ObservableProperty] private Guid id = Guid.CreateVersion7();
 
-    [ObservableProperty] private ModBusRtuClient? modBusRtuClient;
+    [ObservableProperty] private ModBusClient modBusClient;
+
+    [ObservableProperty] private string status = "Status: OK";
 
     [ObservableProperty] private string name = "Device - Unknown";
 
     [ObservableProperty] private byte deviceId;
 
-    [ObservableProperty] private byte registersToRead = 1;
+    [ObservableProperty] private ushort registersToRead = 1;
 
-    [ObservableProperty] private byte registerStart = 0;
+    [ObservableProperty] private ushort registerStart = 0;
 
     [ObservableProperty] private string description = "";
 
@@ -46,16 +48,23 @@ public abstract partial class DeviceBase : ObservableObject
 
     [ObservableProperty] private bool isExpanded;
 
+    [ObservableProperty] private bool isEnabled;
+
     /// <inheritdoc/>
-    protected DeviceBase(ModBusRtuClient modBusRtuClient,
+    protected DeviceBase(ModBusClient modBusClient,
         string name,
         byte deviceId = 1,
-        byte registerStart = 0,
-        byte registersToRead = 1,
-        DeviceDirection direction = DeviceDirection.InAndOut)
+        ushort registerStart = 0,
+        ushort registersToRead = 1,
+        DeviceDirection direction = DeviceDirection.InAndOut,
+        int pollingFrequency = 1000,
+        int delayedStart = 1000,
+        string description = "")
     {
-        this.direction = direction;
-        ModBusRtuClient = modBusRtuClient;
+        PollingFrequency = pollingFrequency;
+        DelayedStart = delayedStart;
+        Direction = direction;
+        ModBusClient = modBusClient;
         Name = name;
         DeviceId = deviceId;
         RegisterStart = registerStart;
@@ -72,44 +81,56 @@ public class SensorDevice : DeviceBase, IDisposable
     private readonly ILogger<SensorDevice> logger = AppService.GetRequiredService<ILogger<SensorDevice>>();
     private readonly Dictionary<int, Sensor> sensorInputs = new();
 
-    public SensorDevice(ModBusRtuClient modBusRtuClient, string name, byte deviceId = 1, byte registerStart = 0,
-        byte registersToRead = 1, DeviceDirection direction = DeviceDirection.InAndOut, string description = "")
-        : base(modBusRtuClient, name, deviceId, registerStart, registersToRead, direction)
+    public SensorDevice(ModBusClient modBusClient, string name, byte deviceId = 1, ushort registerStart = 0,
+        ushort registersToRead = 1, DeviceDirection direction = DeviceDirection.InAndOut,
+        int pollingFrequency = 1000,
+        int delayedStart = 1000, string description = "")
+        : base(modBusClient, name, deviceId, registerStart, registersToRead, direction, pollingFrequency, delayedStart,
+            string.IsNullOrEmpty(description) ? name : description)
     {
     }
 
     private void OnTimerCallback(object? state)
     {
-        logger.LogDebug("Polling sensor device {DeviceName}", Name);
-
-        PollingTimer?.Change(Timeout.Infinite, Timeout.Infinite); // stop timer
-
-        if (ModBusRtuClient is null)
-        {
-            logger.LogWarning("ModBus client is not initialized for sensor device {DeviceName}. Skipping polling.",
-                Name);
+        if (!IsEnabled)
             return;
-        }
 
-        try
+        if (IsExpanded)
+            logger.LogDebug("Polling sensor device {DeviceName}", Name);
+
+        Status = "Status: Queued...";
+
+        lock (ModBusClient.BusLock)
         {
-            WeakReferenceMessenger.Default.Send(new OnBeforeModbusReadMessage(this));
+            PollingTimer?.Change(Timeout.Infinite, Timeout.Infinite); // stop timer
 
-            var sensorReadings = ModBusRtuClient.Read(DeviceId, RegisterStart, RegistersToRead);
-
-            WeakReferenceMessenger.Default.Send(new OnBeforeModbusReadMessage(this));
-
-            foreach (var sensor in sensorInputs.Values)
+            try
             {
-                sensor.ProcessSensorReading(sensorReadings);
-            }
+                Status = "Status: Reading...";
+                WeakReferenceMessenger.Default.Send(new OnBeforeModbusReadMessage(this));
 
-            WeakReferenceMessenger.Default.Send(new OnModbusReadDataTransformedMessage(this));
-        }
-        finally
-        {
-            logger.LogDebug("Polling sensor device {DeviceName} completed", Name);
-            PollingTimer?.Change(PollingFrequency, PollingFrequency); // restart
+                var sensorReadings = ModBusClient.Read(DeviceId, RegisterStart, RegistersToRead);
+
+                WeakReferenceMessenger.Default.Send(new OnBeforeModbusReadMessage(this));
+
+                foreach (var sensor in sensorInputs.Values)
+                {
+                    sensor.ProcessSensorReading(sensorReadings);
+                }
+
+                Status = "Status: Reading... Ok";
+                WeakReferenceMessenger.Default.Send(new OnModbusReadDataTransformedMessage(this));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error reading ModBus data for sensor device {DeviceName}", Name);
+                Status = $"Status: Error: {ex.Message}";
+            }
+            finally
+            {
+                logger.LogDebug("Polling sensor device {DeviceName} completed", Name);
+                PollingTimer?.Change(PollingFrequency, PollingFrequency); // restart
+            }
         }
     }
 
@@ -125,7 +146,7 @@ public class SensorDevice : DeviceBase, IDisposable
             logger.LogWarning($"Sensor with index {sensor.RegisterAddress} already exists. Skipping addition.");
             return;
         }
-        
+
         WeakReferenceMessenger.Default.Send(new OnSensorAddedMessage(sensor));
     }
 
@@ -154,22 +175,27 @@ public partial class Sensor : ObservableObject
 
     [ObservableProperty] private int numberOfDecimals;
 
-    [ObservableProperty] private int registerAddress;
+    [ObservableProperty] private ushort registerAddress;
 
     [ObservableProperty] private decimal registerValue;
 
     [ObservableProperty] private string unit = "%";
 
-    public Sensor(SensorDevice sensorDevice, byte registerAddress)
+    public Sensor(SensorDevice sensorDevice, ushort registerAddress, string name = "Sensor", string sensorType = "Temp",
+        int numberOfDecimals = 1, string unit = "C")
     {
         RegisterAddress = registerAddress;
         SensorDevice = sensorDevice;
+        Name = name;
+        SensorType = sensorType;
+        NumberOfDecimals = numberOfDecimals;
+        Unit = unit;
     }
 
     public void ProcessSensorReading(ushort[] sensorReadings)
     {
         var oldRegisterValue = RegisterValue;
-        
+
         if (sensorReadings.Length == 0)
         {
             logger.LogWarning(
@@ -178,7 +204,8 @@ public partial class Sensor : ObservableObject
             return;
         }
 
-        var value = sensorReadings[RegisterAddress];
+        var sensorDeviceRegisterStart = RegisterAddress - SensorDevice.RegisterStart;
+        var value = sensorReadings[sensorDeviceRegisterStart];
 
         if (value == 0)
         {
@@ -200,4 +227,3 @@ public partial class Sensor : ObservableObject
         WeakReferenceMessenger.Default.Send(new OnSensorDataChangedMessage(this, RegisterValue, oldRegisterValue));
     }
 }
-

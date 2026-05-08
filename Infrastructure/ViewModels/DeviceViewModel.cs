@@ -87,12 +87,17 @@ public partial class DeviceSensorViewModel : ObservableObject
                     if (m.Sensor.SensorDevice.Id == sensorDevice.Id)
                     {
                         SensorList.Add(new SensorViewModel(m.Sensor));
+                        var maxWidth = SensorList.Max(s => s.Sensor.Name.Length * 7.5);
+                        foreach (var vm in SensorList)
+                            vm.NameColumnWidth = maxWidth;
                     }
                 }
                 catch (Exception e)
                 {
                     logger.LogError(e, "Error in {Method}: {Message}", nameof(DeviceSensorViewModel),
                         e.Message);
+                    
+                    throw;
                 }
             });
         });
@@ -129,6 +134,7 @@ public partial class SensorViewModel : ObservableObject
     private CancellationTokenSource? _highlightCts;
 
     [ObservableProperty] private Sensor sensor;
+    [ObservableProperty] private double nameColumnWidth;
     [ObservableProperty] private Color registerValueTextColor = DefaultTextColor();
 
     private static Color DefaultTextColor() =>

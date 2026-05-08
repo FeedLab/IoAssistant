@@ -20,8 +20,14 @@ public class DeviceService
         logger.LogDebug("{Message} sent successfully for device {Device}", nameof(OnDeviceAddedMessage), device.Name);
     }
 
+   
     public List<SensorDevice> GetDevices()
     {
-        return items;
+        return items.ToList();
+    }
+    
+    public List<SensorDevice> GetDevices<T>() where T : ModBusClient
+    {
+        return items.Where(w => w.ModBusClient is T).ToList();
     }
 }

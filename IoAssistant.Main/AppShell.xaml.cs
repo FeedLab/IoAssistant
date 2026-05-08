@@ -15,7 +15,6 @@ public partial class AppShell : Shell
 
         Items.Add(new ShellContent
         {
-            Title = "Home",
             Content = pageName,
             Route = "MainPage"
         });

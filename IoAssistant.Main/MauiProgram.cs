@@ -15,6 +15,8 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1JHaF5cWWdCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWXxccXZVQ2FeVEV/XUdWYEo=");
+        
         var builder = MauiApp.CreateBuilder();
         
         // Configure Serilog
