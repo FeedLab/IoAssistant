@@ -2,9 +2,7 @@
 
 namespace IoAssistant.Infrastructure.Messages;
 
-internal class OnBeforeModbusReadMessage
+public class OnBeforeModbusReadMessage(ModbusDevice modbusDevice)
 {
-    public OnBeforeModbusReadMessage(SensorDevice sensorDevice)
-    {
-    }
+    public ModbusDevice ModbusDevice { get; } = modbusDevice;
 }

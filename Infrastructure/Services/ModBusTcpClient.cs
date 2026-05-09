@@ -7,12 +7,20 @@ namespace IoAssistant.Infrastructure.Services;
 
 public partial class ModBusTcpClient : ModBusClient
 {
-    [ObservableProperty] private string host = "192.168.68.75";
+    [ObservableProperty] private string host;
 
-    [ObservableProperty] private int port = 8899;
+    [ObservableProperty] private ushort port;
 
     private TcpClient? tcpClient;
     private readonly ILogger<ModBusTcpClient> logger = AppService.GetRequiredService<ILogger<ModBusTcpClient>>();
+
+    public ModBusTcpClient(string host, ushort port)
+    {
+        CommunicationType = CommunicationType.ModbusTcp;
+        
+        Host = host;
+        Port = port;
+    }
 
     public override void Start()
     {
@@ -46,30 +54,17 @@ public partial class ModBusTcpClient : ModBusClient
         }
     }
 
-    public override ushort[] Read(byte slaveId, ushort startAddress, ushort numRegisters)
+    public override ushort[] Read(byte slaveId, ushort startAddress, ushort numRegisters, ushort functionCode)
     {
-        // if (tcpClient is null || !tcpClient.Connected)
-        // {
-        //     logger.LogWarning("ModBus TCP client is not connected. Attempting reconnect to {Host}:{Port}", Host, Port);
-        //     Start();
-        // }
-
         try
         {
             var factory = new ModbusFactory();
             var master = factory.CreateMaster(tcpClient);
-
-            var registers = master.ReadHoldingRegisters(slaveId, startAddress, numRegisters);
-
-            if (registers is null)
-            {
-                logger.LogError("ModBus TCP read failed at register {Register} with {NumRegisters}", startAddress, numRegisters);
-                return [];
-            }
+            var registerValues = ReadModbusRegisters(slaveId, startAddress, numRegisters, functionCode, master);
 
             logger.LogInformation("ModBus TCP read successful at register {Register} with {NumRegisters}", startAddress, numRegisters);
 
-            return registers;
+            return registerValues;
         }
         catch (Exception ex)
         {
@@ -77,4 +72,6 @@ public partial class ModBusTcpClient : ModBusClient
             throw;
         }
     }
+
+
 }

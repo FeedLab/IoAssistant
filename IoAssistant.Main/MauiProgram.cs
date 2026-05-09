@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Maui;
+using IoAssistant.Database;
+using IoAssistant.Database.Repositories;
 using IoAssistant.Device.Desktop;
 using IoAssistant.Device.Phone;
 using IoAssistant.Infrastructure.Extensions;
@@ -47,6 +49,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<DeviceService>();
         builder.Services.AddSingleton<ModBusClientService>();
         
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "ioassistant.db");
+        builder.Services.AddSingleton(_ => new DeviceRepository(dbPath));
+        builder.Services.AddSingleton(_ => new ProjectRepository(dbPath));
+        builder.Services.AddSingleton(_ => new SensorRepository(dbPath));
+        builder.Services.AddSingleton(_ => new ModBusClientRepository(dbPath));
+        builder.Services.AddTransient<DatabaseSeeder>();
+
         builder.Services.AddSingleton<DeviceViewModel>();
         
         RegisterPages(builder.Services);
@@ -55,7 +64,9 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
+        var app = builder.Build();
+
+        return app;
     }
 
     private static void RegisterPages(IServiceCollection serviceCollection)

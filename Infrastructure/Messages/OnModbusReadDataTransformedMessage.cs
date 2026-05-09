@@ -2,9 +2,6 @@
 
 namespace IoAssistant.Infrastructure.Messages;
 
-public class OnModbusReadDataTransformedMessage
+public class OnModbusReadDataTransformedMessage(ModbusDevice modbusDevice)
 {
-    public OnModbusReadDataTransformedMessage(SensorDevice sensorDevice)
-    {
-    }
-}
+}   

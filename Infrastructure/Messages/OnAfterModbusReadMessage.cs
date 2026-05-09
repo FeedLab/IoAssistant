@@ -2,9 +2,7 @@
 
 namespace IoAssistant.Infrastructure.Messages;
 
-public class OnAfterModbusReadMessage
+public class OnAfterModbusReadMessage(ModbusDevice modbusDevice)
 {
-    public OnAfterModbusReadMessage(SensorDevice sensorDevice)
-    {
-    }
+    public ModbusDevice ModbusDevice { get; } = modbusDevice;
 }

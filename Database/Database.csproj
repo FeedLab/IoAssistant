@@ -9,7 +9,7 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>IoAssistant.Device.Desktop</RootNamespace>
+        <RootNamespace>IoAssistant.Database</RootNamespace>
 
         <!-- Enable XAML source generation for faster build times and improved performance.
              This generates C# code from XAML at compile time instead of runtime inflation.
@@ -27,25 +27,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
-        <PackageReference Include="Syncfusion.Maui.Buttons" Version="33.2.5" />
-        <PackageReference Include="Syncfusion.Maui.Charts" Version="33.2.5" />
-        <PackageReference Include="Syncfusion.Maui.ListView" Version="33.2.5" />
-        <PackageReference Include="Syncfusion.Maui.TabView" Version="33.2.5" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <MauiXaml Update="MainPage_Desktop.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="MainPage_Desktop.xaml.cs">
-        <DependentUpon>MainPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
+        <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60"/>
+        <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+        <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,26 +7,26 @@ namespace IoAssistant.Infrastructure.Services;
 
 public class DeviceService
 {
-    readonly List<SensorDevice> items = new List<SensorDevice>();
+    readonly List<ModbusDevice> items = new List<ModbusDevice>();
     private readonly ILogger<DeviceService> logger = AppService.GetRequiredService<ILogger<DeviceService>>();
 
-    public void AddDevice(SensorDevice device)
+    public void AddDevice(ModbusDevice modbusDevice)
     {
-        items.Add(device);
-        logger.LogDebug("Device {Device} added", device.Name);
+        items.Add(modbusDevice);
+        logger.LogDebug("Device {Device} added", modbusDevice.Name);
         
-        logger.LogDebug("Sending {Message} for device {Device} (Id={DeviceId})", nameof(OnDeviceAddedMessage), device.Name, device.DeviceId);
-        WeakReferenceMessenger.Default.Send(new OnDeviceAddedMessage(device));
-        logger.LogDebug("{Message} sent successfully for device {Device}", nameof(OnDeviceAddedMessage), device.Name);
+        logger.LogDebug("Sending {Message} for device {Device} (Id={DeviceId})", nameof(OnDeviceAddedMessage), modbusDevice.Name, modbusDevice.DeviceId);
+        WeakReferenceMessenger.Default.Send(new OnDeviceAddedMessage(modbusDevice));
+        logger.LogDebug("{Message} sent successfully for device {Device}", nameof(OnDeviceAddedMessage), modbusDevice.Name);
     }
 
    
-    public List<SensorDevice> GetDevices()
+    public List<ModbusDevice> GetDevices()
     {
         return items.ToList();
     }
     
-    public List<SensorDevice> GetDevices<T>() where T : ModBusClient
+    public List<ModbusDevice> GetDevices<T>() where T : ModBusClient
     {
         return items.Where(w => w.ModBusClient is T).ToList();
     }

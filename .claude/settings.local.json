@@ -1,7 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Bash(ls -la \"D:\\\\Git\\\\IoAssistant\\\\Infrastructure\\\\obj\\\\Debug\\\\net10.0-maccatalyst\\\\ref\"\" 2>&1 || echo \"Directory does not exist \")",
+      "Bash(find /d/Git/IoAssistant/Infrastructure/obj -type d -name net10.0*)",
+      "Bash(xxd)",
+      "Bash(find /d/Git/IoAssistant -name *.dll -type f)",
+      "Bash(dotnet build:*)",
+      "Bash(\"/c/Program Files/dotnet/dotnet.exe\" build \"D:/Git/IoAssistant/Infrastructure/Infrastructure.csproj\" -f net10.0-android)",
+      "Bash(\"/c/Program Files/dotnet/dotnet.exe\" build \"D:/Git/IoAssistant/IoAssistant.slnx\")",
+      "Bash(dotnet workload:*)",
+      "Bash(cmd.exe /c \"dotnet workload list 2>&1\")",
+      "Bash(dotnet.exe workload:*)",
+      "Read(//mnt/c/**)",
+      "Read(//mnt/d/**)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

@@ -2,7 +2,7 @@
 
 namespace IoAssistant.Infrastructure.Messages;
 
-public class OnDeviceAddedMessage(SensorDevice sensorDevice)
+public class OnDeviceAddedMessage(ModbusDevice modbusDevice)
 {
-    public SensorDevice SensorDevice { get; } = sensorDevice;
+    public ModbusDevice ModbusDevice { get; } = modbusDevice;
 }

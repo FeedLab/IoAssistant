@@ -24,6 +24,7 @@ public partial class ModBusRtuClient : ModBusClient
 
     public ModBusRtuClient() : base()   
     {
+        CommunicationType = CommunicationType.ModbusRtu;
     }
 
     public override void Start()
@@ -72,26 +73,20 @@ public partial class ModBusRtuClient : ModBusClient
         }
     }
 
-    public override ushort[] Read(byte slaveId, ushort startAddress, ushort numRegisters)
+    public override ushort[] Read(byte slaveId, ushort startAddress, ushort numRegisters, ushort functionCode)
     {
         try
         {
             var factory = new ModbusFactory();
-            var master = factory.CreateRtuMaster(new SerialPortAdapter(serialPort));
+            // serialPort = new SerialPort(PortName);
+            var master = factory.CreateRtuMaster(serialPort);
 
-            var registers = master.ReadHoldingRegisters(slaveId, startAddress, numRegisters);
-
-            if (registers is null)
-            {
-                logger.LogError("ModBus read failed at register {Register} with {NumRegisters}", startAddress,
-                    numRegisters);
-                return [];
-            }
+            var registerValues = ReadModbusRegisters(slaveId, startAddress, numRegisters, functionCode, master);
 
             logger.LogInformation("ModBus read successful at register {Register} with {NumRegisters}", startAddress,
                 numRegisters);
 
-            return registers;
+            return registerValues;
         }
         catch (Exception ex)
         {

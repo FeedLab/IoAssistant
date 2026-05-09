@@ -1,8 +1,8 @@
-﻿using SensorDevice = IoAssistant.Infrastructure.Devices.SensorDevice;
+﻿using IoAssistant.Infrastructure.Devices;
 
 namespace IoAssistant.Infrastructure.Services;
 
 public class Storage
 {
-    List<SensorDevice> items = new List<SensorDevice>();
+    List<Sensor> items = new List<Sensor>();
 }
