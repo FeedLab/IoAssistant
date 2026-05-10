@@ -58,6 +58,7 @@ public partial class Sensor : ObservableObject
 
         if (oldRegisterValue == registerValue)
         {
+            WeakReferenceMessenger.Default.Send(new OnSensorDataChangedMessage(this, Value, oldRegisterValue));
             return;
         }
 

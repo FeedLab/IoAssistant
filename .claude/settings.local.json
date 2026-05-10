@@ -14,7 +14,9 @@
       "Bash(dotnet.exe workload:*)",
       "Read(//mnt/c/**)",
       "Read(//mnt/d/**)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(xargs -I{} sh -c \"unzip -p \"\"{}\"\" 2>/dev/null | strings 2>/dev/null | grep -i \"\"CheckBoxState\"\"\")",
+      "Bash(find D:/Git/IoAssistant -path */packages* -name Syncfusion.Maui.Buttons*)"
     ]
   }
 }

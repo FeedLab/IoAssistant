@@ -46,11 +46,14 @@ public partial class ModBusRtuClient : ModBusClient
                 "ModBus RTU client started on {PortName} with BaudRate={BaudRate}, DataBits={DataBits}, Parity={Parity}, StopBits={StopBits}, ReadTimeout={ReadTimeout}",
                 PortName, BaudRate, DataBits, Parity, StopBits, ReadTimeout
             );
+            
+            IsInitialized = true;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error starting ModBus RTU client on {PortName}", PortName);
-            throw;
+            
+            IsInitialized = false;
         }
     }
 
@@ -77,6 +80,12 @@ public partial class ModBusRtuClient : ModBusClient
     {
         try
         {
+            if (serialPort is null || !serialPort.IsOpen || !IsInitialized)
+            {
+                logger.LogWarning("ModBus RTU client is not open or not proper initialized");
+                return [];
+            }
+            
             var factory = new ModbusFactory();
             // serialPort = new SerialPort(PortName);
             var master = factory.CreateRtuMaster(serialPort);

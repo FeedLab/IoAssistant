@@ -47,14 +47,14 @@ public class DatabaseSeeder(
 
         var modbusDeviceSensor23 = new ModbusDevice(modBusRtuClient, "Sensor 23", 23, 0, 6, 3, 1000, 1000, "");
         await deviceRepository.AddAsync(modbusDeviceSensor23, project.Id, modBusRtuClient.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor23, "Temperature", 0, new IoDirection(IoDirectionType.Input), "C", 1), modbusDeviceSensor23.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor23, "Humidity", 1, new IoDirection(IoDirectionType.Input), "RH", 1), modbusDeviceSensor23.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor23, "CO2", 5, new IoDirection(IoDirectionType.Input), "ppm", 1), modbusDeviceSensor23.Id);
+        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor23, "Temperature", 1, new IoDirection(IoDirectionType.Input), "C", 1), modbusDeviceSensor23.Id);
+        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor23, "Humidity (RH)", 0, new IoDirection(IoDirectionType.Input), "%", 1), modbusDeviceSensor23.Id);
+        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor23, "CO2", 5, new IoDirection(IoDirectionType.Input), "ppm", 0), modbusDeviceSensor23.Id);
 
         var modbusDeviceSensor52 = new ModbusDevice(modBusRtuClient, "Sensor 52", 52, 0, 6, 3, 1000, 1000, "");
         await deviceRepository.AddAsync(modbusDeviceSensor52, project.Id, modBusRtuClient.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "Temperature", 0, new IoDirection(IoDirectionType.Input), "C", 1), modbusDeviceSensor52.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "Humidity", 1, new IoDirection(IoDirectionType.Input), "RH", 1), modbusDeviceSensor52.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "CO2", 5, new IoDirection(IoDirectionType.Input), "ppm", 1), modbusDeviceSensor52.Id);
+        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "Temperature", 1, new IoDirection(IoDirectionType.Input), "C", 1), modbusDeviceSensor52.Id);
+        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "Humidity (RH)", 0, new IoDirection(IoDirectionType.Input), "%", 1), modbusDeviceSensor52.Id);
+        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "CO2", 5, new IoDirection(IoDirectionType.Input), "ppm", 0), modbusDeviceSensor52.Id);
     }
 }

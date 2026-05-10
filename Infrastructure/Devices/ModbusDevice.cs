@@ -91,6 +91,12 @@ public partial class ModbusDevice : ObservableObject
 
                 WeakReferenceMessenger.Default.Send(new OnAfterModbusReadMessage(this));
 
+                if (sensorReadings.Length == 0)
+                {
+                    logger.LogWarning("No sensor readings returned for sensor {DeviceName}", Name);
+                    return;
+                }
+
                 foreach (var sensor in sensors)
                 {
                     sensor.ProcessSensorReading(sensorReadings);

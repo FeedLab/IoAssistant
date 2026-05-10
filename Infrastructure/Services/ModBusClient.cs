@@ -16,6 +16,7 @@ public abstract partial class ModBusClient : ObservableObject
 
     public Guid Id { get; set; } = Guid.CreateVersion7();
 
+    [ObservableProperty] private bool isInitialized;
     [ObservableProperty] private int readTimeout = 2000;
     [ObservableProperty] private CommunicationType communicationType = CommunicationType.ModbusTcp;
     

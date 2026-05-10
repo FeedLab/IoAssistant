@@ -30,11 +30,14 @@ public partial class ModBusTcpClient : ModBusClient
             tcpClient.Connect(Host, Port);
 
             logger.LogInformation("ModBus TCP client connected to {Host}:{Port}", Host, Port);
+            
+            IsInitialized = true;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error connecting ModBus TCP client to {Host}:{Port}", Host, Port);
-            throw;
+            
+            IsInitialized = false;
         }
     }
 
@@ -58,6 +61,12 @@ public partial class ModBusTcpClient : ModBusClient
     {
         try
         {
+            if (tcpClient is null || !tcpClient.Connected || !IsInitialized)
+            {
+                logger.LogWarning("ModBus TCP client is not Connected or not proper initialized");
+                return [];
+            }
+            
             var factory = new ModbusFactory();
             var master = factory.CreateMaster(tcpClient);
             var registerValues = ReadModbusRegisters(slaveId, startAddress, numRegisters, functionCode, master);

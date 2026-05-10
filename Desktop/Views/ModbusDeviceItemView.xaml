@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:listView="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+             xmlns:vm="clr-namespace:IoAssistant.Infrastructure.ViewModels;assembly=Infrastructure"
+             xmlns:buttons="http://schemas.syncfusion.com/maui"
+             x:Class="IoAssistant.Device.Desktop.Views.ModbusDeviceItemView"
+             x:DataType="vm:ModbusDeviceViewModel">
+
+    <Border Margin="8,4,14,8"
+            Padding="0"
+            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 6">
+        <Border.Shadow>
+            <Shadow Brush="Black" Offset="4,4" Radius="6" Opacity="0.2" />
+        </Border.Shadow>
+
+        <Grid Padding="12,8"
+              ColumnDefinitions="Auto,Auto,*,Auto"
+              RowDefinitions="Auto,Auto,Auto">
+
+            <!-- Device ID badge -->
+            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                    BackgroundColor="{AppThemeBinding Light=#E3F2FD, Dark=#1565C0}"
+                    StrokeShape="RoundRectangle 6"
+                    Stroke="Transparent"
+                    WidthRequest="40" HeightRequest="40"
+                    Margin="0,0,12,0"
+                    VerticalOptions="Center">
+                <Label Text="{Binding ModbusDevice.DeviceId}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#1565C0, Dark=White}" />
+            </Border>
+
+            <!-- Name -->
+            <Label Grid.Row="0" Grid.Column="1"
+                   Text="{Binding ModbusDevice.Name}"
+                   TextColor="{Binding NameTextColor}"
+                   FontSize="15"
+                   FontAttributes="Bold"
+                   VerticalOptions="Center" />
+
+            <!-- Status -->
+            <HorizontalStackLayout
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="2">
+
+                <Label
+                    Text="{Binding ModbusDevice.Status}"
+                    TextColor="Black"
+                    FontSize="15"
+                    FontAttributes="Bold"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <!-- CheckBox -->
+            <buttons:SfCheckBox
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                Text="Execute"
+                IsChecked="{Binding ModbusDevice.IsEnabled}"
+                StateChanged="OnDeviceEnabledChanged" />
+
+            <!-- Direction + polling + expand chevron -->
+            <VerticalStackLayout Grid.Row="0" Grid.RowSpan="2" Grid.Column="3"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="End"
+                                 Spacing="2">
+                <Label Text="{Binding ModbusDevice.PollingFrequency}"
+                       FontSize="11"
+                       HorizontalOptions="End"
+                       TextColor="{AppThemeBinding Light=#1976D2, Dark=#90CAF9}" />
+                <Label FontSize="11"
+                       HorizontalOptions="End"
+                       TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding ModbusDevice.PollingFrequency}" />
+                            <Span Text=" ms" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Button Text="&#x25BC;"
+                        FontSize="10"
+                        Padding="4,0"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light=#555, Dark=#AAA}"
+                        HorizontalOptions="End"
+                        Clicked="OnExpandClicked" />
+            </VerticalStackLayout>
+
+            <!-- Sensor list (collapsible) -->
+            <listView:SfListView
+                Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4"
+                IsVisible="{Binding ModbusDevice.IsExpanded}"
+                ItemsSource="{Binding SensorList}"
+                SelectionMode="None"
+                AutoFitMode="DynamicHeight"
+                Margin="52,4,0,4">
+                <listView:SfListView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DeviceSensorViewModel">
+                        <Grid Padding="8,4"
+                              ColumnDefinitions="Auto,Auto,Auto,*"
+                              RowDefinitions="Auto">
+                            <Label Grid.Column="0"
+                                   Margin="0,0,12,0"
+                                   Text="{Binding Sensor.Direction.Name}"
+                                   TextColor="{Binding Sensor.Direction.Color}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+
+                            <Label Grid.Column="1"
+                                   Text="{Binding Sensor.Name}"
+                                   WidthRequest="{Binding NameColumnWidth}"
+                                   FontSize="13"
+                                   VerticalOptions="Center" />
+
+                            <Label Grid.Column="2"
+                                   Text="{Binding Sensor.Value}"
+                                   TextColor="{Binding RegisterValueTextColor}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   Margin="8,0,0,0"
+                                   VerticalOptions="Center" />
+                            <Label Grid.Column="3"
+                                   Text="{Binding Sensor.Unit}"
+                                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}"
+                                   FontSize="13"
+                                   Margin="4,0,0,0"
+                                   VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </listView:SfListView.ItemTemplate>
+            </listView:SfListView>
+
+        </Grid>
+    </Border>
+
+</ContentView>
