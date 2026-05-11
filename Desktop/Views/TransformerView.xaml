@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             x:Class="IoAssistant.Device.Desktop.Views.TransformerView">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <syncfusion:SfDataGrid
+            Grid.Column="0"
+            HorizontalOptions="Fill"
+            ItemsSource="{Binding Transformers}"
+            AutoGenerateColumnsMode="None"
+            SelectionMode="Single"
+            NavigationMode="Row"
+            ColumnWidthMode="LastColumnFill"
+            SelectionChanged="OnTransformerSelected">
+
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:DataGridTextColumn MappingName="Name" HeaderText="Name" />
+                <syncfusion:DataGridTextColumn MappingName="Inputs" HeaderText="Inputs" HeaderTextAlignment="Center" CellTextAlignment="Center"/>
+                <syncfusion:DataGridTextColumn MappingName="Description" HeaderText="Description" />
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
+
+        <ContentView
+            x:Name="TransformerPlaceholder"
+            Grid.Column="1"/>
+    </Grid>
+</ContentView>

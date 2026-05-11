@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IoAssistant.PnP;
 using Microsoft.Extensions.Logging;
 using NModbus;
 

@@ -1,20 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
 using NModbus;
 
 namespace IoAssistant.Infrastructure.Services;
 
-public enum CommunicationType
+public abstract partial class ModBusClient : ObservableObject, IModBusClient
 {
-    ModbusTcp,
-    ModbusRtu
-}
-
-public abstract partial class ModBusClient : ObservableObject
-{
-    public readonly Lock BusLock = new();
-
     public Guid Id { get; set; } = Guid.CreateVersion7();
+    public Lock BusLock { get; set; } = new();
 
     [ObservableProperty] private bool isInitialized;
     [ObservableProperty] private int readTimeout = 2000;

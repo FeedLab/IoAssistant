@@ -39,5 +39,9 @@
       <Folder Include="Models\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\IoAssistant.PnP\IoAssistant.PnP.csproj" />
+    </ItemGroup>
+
 
 </Project>

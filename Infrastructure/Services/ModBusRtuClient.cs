@@ -1,5 +1,6 @@
 ﻿using System.IO.Ports;
 using CommunityToolkit.Mvvm.ComponentModel;
+using IoAssistant.PnP;
 using Microsoft.Extensions.Logging;
 using NModbus;
 using NModbus.Serial;

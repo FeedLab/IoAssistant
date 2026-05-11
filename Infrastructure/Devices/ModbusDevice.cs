@@ -4,22 +4,22 @@ using CommunityToolkit.Mvvm.Messaging;
 using DecimalMath;
 using IoAssistant.Infrastructure.Messages;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace IoAssistant.Infrastructure.Devices;
 
-
-
 [SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0034:Direct field reference to [ObservableProperty] backing field")]
-public partial class ModbusDevice : ObservableObject
+public partial class ModbusDevice : ObservableObject, IModbusDevice
 {
-    private readonly ILogger<ModbusDevice> logger = AppService.GetRequiredService<ILogger<ModbusDevice>>();
+    private readonly ILogger<IModbusDevice> logger = AppService.GetRequiredService<ILogger<IModbusDevice>>();
 
     protected Timer? PollingTimer;
 
     [ObservableProperty] private Guid id = Guid.CreateVersion7();
 
-    [ObservableProperty] private ModBusClient modBusClient;
+    [ObservableProperty] private IModBusClient modBusClient;
 
     [ObservableProperty] private string status = "Status: OK";
 
@@ -43,11 +43,11 @@ public partial class ModbusDevice : ObservableObject
     
     [ObservableProperty] private ushort functionCode;
     
-    private readonly List<Sensor> sensors = [];
+    [ObservableProperty] private readonly List<ISensor> sensors = [];
 
 
     public ModbusDevice(
-        ModBusClient modBusClient,
+        IModBusClient modBusClient,
         string name, 
         byte deviceId = 1, 
         ushort startRegister = 0,
@@ -133,11 +133,11 @@ public partial class ModbusDevice : ObservableObject
         PollingTimer?.Dispose();
     }
 
-    public void AddSensor(Sensor sensor)
+    public void AddSensor(ISensor sensor)
     {
         sensors.Add(sensor);
 
-        WeakReferenceMessenger.Default.Send(new OnSensorAddedMessage(sensor));
+        WeakReferenceMessenger.Default.Send<IOnSensorAddedMessage>(new OnSensorAddedMessage(sensor));
     }
     
 

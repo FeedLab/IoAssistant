@@ -1,8 +1,10 @@
 ﻿using IoAssistant.Infrastructure.Devices;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 
 namespace IoAssistant.Infrastructure.Messages;
 
-public class OnSensorAddedMessage(Sensor sensor)
+public class OnSensorAddedMessage(ISensor sensor) : IOnSensorAddedMessage
 {
-    public Sensor Sensor { get; } = sensor;
+    public ISensor Sensor { get; } = sensor;
 }

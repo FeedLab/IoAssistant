@@ -1,5 +1,6 @@
 using System.IO.Ports;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP;
 using SQLite;
 
 namespace IoAssistant.Database.Models;

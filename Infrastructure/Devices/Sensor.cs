@@ -1,29 +1,30 @@
-﻿using System.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using DecimalMath;
 using IoAssistant.Infrastructure.Messages;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace IoAssistant.Infrastructure.Devices;
 
-public partial class Sensor : ObservableObject
+public partial class Sensor : ObservableObject, ISensor
 {
-    private readonly ILogger<Sensor> logger = AppService.GetRequiredService<ILogger<Sensor>>();
+    private readonly ILogger<ISensor> logger = AppService.GetRequiredService<ILogger<ISensor>>();
     private readonly Dictionary<int, Sensor> sensorInputs = new();
 
     public Guid Id { get; set; } = Guid.CreateVersion7();
 
-    [ObservableProperty] private ModbusDevice modbusDevice;
+    [ObservableProperty] private IModbusDevice modbusDevice;
     [ObservableProperty] private string name;
     [ObservableProperty] private string unit;
     [ObservableProperty] private ushort numRegister;
     [ObservableProperty] private decimal value;
-    [ObservableProperty] private IoDirection direction;
+    [ObservableProperty] private IIoDirection direction;
     [ObservableProperty] private int numberOfDecimals;
 
-    public Sensor(ModbusDevice modbusDevice, string name, ushort numRegister, IoDirection direction, string unit,
+    public Sensor(IModbusDevice modbusDevice, string name, ushort numRegister, IIoDirection direction, string unit,
         int numberOfDecimals = 0)
     {
         NumberOfDecimals = numberOfDecimals;
@@ -34,21 +35,6 @@ public partial class Sensor : ObservableObject
         Direction = direction;
     }
 
-
-    // public void AddSensor(ModbusDevice modbusDevice)
-    // {
-    //     if (!sensorInputs.TryAdd(modbusDevice.RegisterAddress, modbusDevice))
-    //     {
-    //         logger.LogWarning($"Sensor with index {modbusDevice.RegisterAddress} already exists. Skipping addition.");
-    //         return;
-    //     }
-    //
-    //     WeakReferenceMessenger.Default.Send(new OnSensorAddedMessage(modbusDevice));
-    // }
-
-    // public List<ModbusDevice> Sensors => sensorInputs.Values.ToList();
-
-
     public void ProcessSensorReading(ushort[] sensorReadings)
     {
         var oldRegisterValue = Value;
@@ -58,7 +44,7 @@ public partial class Sensor : ObservableObject
 
         if (oldRegisterValue == registerValue)
         {
-            WeakReferenceMessenger.Default.Send(new OnSensorDataChangedMessage(this, Value, oldRegisterValue));
+            WeakReferenceMessenger.Default.Send<IOnSensorDataChangedMessage>(new OnSensorDataChangedMessage(this, Value, oldRegisterValue));
             return;
         }
 
@@ -67,6 +53,6 @@ public partial class Sensor : ObservableObject
 
         logger.LogDebug("Sensor value: {Value}", Value);
 
-        WeakReferenceMessenger.Default.Send(new OnSensorDataChangedMessage(this, Value, oldRegisterValue));
+        WeakReferenceMessenger.Default.Send<IOnSensorDataChangedMessage>(new OnSensorDataChangedMessage(this, Value, oldRegisterValue));
     }
 }

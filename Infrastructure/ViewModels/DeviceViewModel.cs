@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using IoAssistant.Infrastructure.Devices;
 using IoAssistant.Infrastructure.Messages;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace IoAssistant.Infrastructure.ViewModels;
@@ -87,7 +89,7 @@ public partial class ModbusDeviceViewModel : ObservableObject
 
         logger = AppService.GetRequiredService<ILogger<ModbusDeviceViewModel>>();
 
-        WeakReferenceMessenger.Default.Register<OnSensorAddedMessage>(this, async (recipient, m) =>
+        WeakReferenceMessenger.Default.Register<IOnSensorAddedMessage>(this, async void (recipient, m) =>
         {
             if (m.Sensor.ModbusDevice.Id != modbusDevice.Id) return;
 
@@ -116,7 +118,7 @@ public partial class ModbusDeviceViewModel : ObservableObject
             });
         });
 
-        WeakReferenceMessenger.Default.Register<OnSensorDataChangedMessage>(this, (recipient, m) =>
+        WeakReferenceMessenger.Default.Register<IOnSensorDataChangedMessage>(this, (recipient, m) =>
         {
             if (!m.HasChanged || m.Sensor.ModbusDevice.Id != modbusDevice.Id) return;
             _ = AnimateNameHighlight();
@@ -207,7 +209,7 @@ public class BoundedChartData : IList<SensorDataPoint>, INotifyCollectionChanged
 
 public partial class DeviceSensorViewModel : ObservableObject
 {
-    public Sensor Sensor { get; }
+    public ISensor Sensor { get; }
 
     private readonly ILogger<DeviceSensorViewModel> logger =
         AppService.GetRequiredService<ILogger<DeviceSensorViewModel>>();
@@ -222,11 +224,11 @@ public partial class DeviceSensorViewModel : ObservableObject
     private static Color DefaultTextColor() =>
         Application.Current?.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black;
 
-    public DeviceSensorViewModel(Sensor sensor)
+    public DeviceSensorViewModel(ISensor sensor)
     {
         Sensor = sensor;
 
-        WeakReferenceMessenger.Default.Register<OnSensorDataChangedMessage>(this, (recipient, m) =>
+        WeakReferenceMessenger.Default.Register<IOnSensorDataChangedMessage>(this, (recipient, m) =>
         {
             if (!m.HasChanged || m.Sensor != sensor)
                 return;
@@ -297,18 +299,18 @@ public partial class SensorViewModel : ObservableObject
 {
     private CancellationTokenSource? _highlightCts;
 
-    [ObservableProperty] private Sensor sensor;
+    [ObservableProperty] private ISensor sensor;
     [ObservableProperty] private double nameColumnWidth;
     [ObservableProperty] private Color registerValueTextColor = DefaultTextColor();
 
     private static Color DefaultTextColor() =>
         Application.Current?.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black;
 
-    public SensorViewModel(Sensor sensor)   
+    public SensorViewModel(ISensor sensor)   
     {
         Sensor = sensor;
 
-        WeakReferenceMessenger.Default.Register<OnSensorDataChangedMessage>(this, (recipient, m) =>
+        WeakReferenceMessenger.Default.Register<IOnSensorDataChangedMessage>(this, (recipient, m) =>
         {
             if (!m.HasChanged || m.Sensor != sensor)
                 return;

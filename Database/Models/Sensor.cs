@@ -1,4 +1,6 @@
 using IoAssistant.Infrastructure.Devices;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 using SQLite;
 
 namespace IoAssistant.Database.Models;

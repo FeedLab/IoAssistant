@@ -2,7 +2,9 @@
 using IoAssistant.Database.Repositories;
 using IoAssistant.Infrastructure.Devices;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog.Core;
 
 namespace IoAssistant.Main;
 
@@ -150,8 +152,10 @@ public partial class App : Application
         var projectRepository = AppService.GetRequiredService<ProjectRepository>();
         var deviceRepository = AppService.GetRequiredService<DeviceRepository>();
         var sensorRepository = AppService.GetRequiredService<SensorRepository>();
+        var transformerRepository = AppService.GetRequiredService<TransformerRepository>();
         var modBusClientRepository = AppService.GetRequiredService<ModBusClientRepository>();
         var deviceService = AppService.GetRequiredService<DeviceService>();
+        var transformers = AppService.GetRequiredService<IReadOnlyList<ITransformer>>();
         await seeder.SeedAsync();
 
         var clients = await modBusClientRepository.GetAllAsync();
@@ -176,6 +180,20 @@ public partial class App : Application
             }
             
             device.Start();
+        }
+
+        var transformersDb = await transformerRepository.GetByProjectAsync(project.Id);
+        
+        foreach (var transformerDb in transformersDb)
+        {
+            var transformer = transformers.SingleOrDefault(s => s.Id == transformerDb.BelongToId);
+
+            if (transformer is null)
+            {
+                throw new InvalidOperationException($"Transformer with id {transformerDb.Id} not found");
+            }
+
+            transformer.CreateInstance(transformerDb.Data);
         }
     }
     

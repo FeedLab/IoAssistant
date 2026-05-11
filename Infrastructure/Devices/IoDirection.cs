@@ -1,15 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 
 namespace IoAssistant.Infrastructure.Devices;
 
-public enum IoDirectionType
-{
-    Input,
-    Output,
-    InAndOut
-}
-
-public partial class IoDirection : ObservableObject
+public partial class IoDirection : ObservableObject, IIoDirection
 {
     [ObservableProperty] private IoDirectionType direction;
 

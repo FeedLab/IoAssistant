@@ -1,5 +1,6 @@
 using IoAssistant.Database.Models;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP;
 using SQLite;
 
 namespace IoAssistant.Database.Repositories;

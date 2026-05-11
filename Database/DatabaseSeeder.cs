@@ -2,6 +2,8 @@ using IoAssistant.Database.Models;
 using IoAssistant.Database.Repositories;
 using IoAssistant.Infrastructure.Devices;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 
 namespace IoAssistant.Database;
 
@@ -9,7 +11,8 @@ public class DatabaseSeeder(
     ProjectRepository projectRepository,
     DeviceRepository deviceRepository,
     SensorRepository sensorRepository,
-    ModBusClientRepository modBusClientRepository)
+    ModBusClientRepository modBusClientRepository,
+    TransformerRepository transformerRepository)
 {
     public async Task SeedAsync()
     {
@@ -17,12 +20,14 @@ public class DatabaseSeeder(
         await projectRepository.InitializeAsync();
         await deviceRepository.InitializeAsync();
         await sensorRepository.InitializeAsync();
+        await transformerRepository.InitializeAsync();
 
         // Clean all rows in all 4 tables
         await sensorRepository.DeleteAllAsync();
         await deviceRepository.DeleteAllAsync();
         await projectRepository.DeleteAllAsync();
         await modBusClientRepository.DeleteAllAsync();
+        await transformerRepository.DeleteAllAsync();
         
         var projects = await projectRepository.GetAllAsync();
         if (projects.Count > 0)
@@ -54,7 +59,20 @@ public class DatabaseSeeder(
         var modbusDeviceSensor52 = new ModbusDevice(modBusRtuClient, "Sensor 52", 52, 0, 6, 3, 1000, 1000, "");
         await deviceRepository.AddAsync(modbusDeviceSensor52, project.Id, modBusRtuClient.Id);
         await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "Temperature", 1, new IoDirection(IoDirectionType.Input), "C", 1), modbusDeviceSensor52.Id);
-        await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "Humidity (RH)", 0, new IoDirection(IoDirectionType.Input), "%", 1), modbusDeviceSensor52.Id);
+        var sensor52Humidity = new Sensor(modbusDeviceSensor52, "Humidity (RH)", 0, new IoDirection(IoDirectionType.Input), "%", 1);
+        await sensorRepository.AddAsync(sensor52Humidity, modbusDeviceSensor52.Id);
         await sensorRepository.AddAsync(new Sensor(modbusDeviceSensor52, "CO2", 5, new IoDirection(IoDirectionType.Input), "ppm", 0), modbusDeviceSensor52.Id);
+
+        var transformerEmaEntity = new TransformerEntity
+        {
+            Id = Guid.NewGuid(),
+            Name = "EMA Transformer",
+            Description = "Exponential Moving Average Transformer",
+            BelongToId = Guid.Parse("cb677e07-ef4d-4717-930a-420dac9ff961"),
+            Data = "{\"alpha\": 0.5}",
+            ProjectId = project.Id
+        };
+        
+        await transformerRepository.AddAsync(transformerEmaEntity);
     }
 }

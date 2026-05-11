@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using IoAssistant.Infrastructure.Devices;
 using IoAssistant.Infrastructure.Messages;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace IoAssistant.Infrastructure.Services;
@@ -29,5 +30,10 @@ public class DeviceService
     public List<ModbusDevice> GetDevices<T>() where T : ModBusClient
     {
         return items.Where(w => w.ModBusClient is T).ToList();
+    }
+    
+    public List<ISensor> GetAllSensors()
+    {
+        return items.SelectMany(m => m.Sensors).ToList();
     }
 }
