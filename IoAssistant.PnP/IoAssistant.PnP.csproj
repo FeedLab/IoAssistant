@@ -9,7 +9,7 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>IoAssistant.Database</RootNamespace>
+        <RootNamespace>IoAssistant.PnP</RootNamespace>
 
         <!-- Enable XAML source generation for faster build times and improved performance.
              This generates C# code from XAML at compile time instead of runtime inflation.
@@ -27,15 +27,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
-        <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2"/>
         <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60"/>
-        <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-        <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
-    </ItemGroup>
-
+    
 </Project>

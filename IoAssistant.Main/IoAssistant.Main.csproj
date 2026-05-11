@@ -81,7 +81,9 @@
     <ItemGroup>
       <ProjectReference Include="..\Database\Database.csproj" />
       <ProjectReference Include="..\Desktop\Desktop.csproj" />
+      <ProjectReference Include="..\EmaTransformer\EmaTransformer.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\IoAssistant.PnP\IoAssistant.PnP.csproj" />
       <ProjectReference Include="..\Phone\Phone.csproj" />
     </ItemGroup>
 

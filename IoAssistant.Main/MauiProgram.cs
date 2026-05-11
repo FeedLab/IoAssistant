@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Linq;
+using System.Reflection;
+using CommunityToolkit.Maui;
 using IoAssistant.Database;
 using IoAssistant.Database.Repositories;
 using IoAssistant.Device.Desktop;
@@ -7,6 +9,8 @@ using IoAssistant.Infrastructure.Extensions;
 using IoAssistant.Infrastructure.Services;
 using IoAssistant.Infrastructure.ViewModels;
 using IoAssistant.Main.Services;
+using IoAssistant.PnP;
+using IoAssistant.Transformers;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Syncfusion.Maui.Core.Hosting;
@@ -59,6 +63,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<DeviceViewModel>();
         
         RegisterPages(builder.Services);
+        
+        RegisterTransformers(builder);
+
 
 #if DEBUG
         builder.Logging.AddDebug();
@@ -67,6 +74,33 @@ public static class MauiProgram
         var app = builder.Build();
 
         return app;
+    }
+
+    private static void RegisterTransformers(MauiAppBuilder builder)
+    {
+        // Load all transformer assemblies from the base directory
+        foreach (var dll in Directory.GetFiles(AppContext.BaseDirectory, "*Transformer*.dll"))
+            Assembly.LoadFrom(dll);
+
+        // Find all implementations of ITransformer and call Register method
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var transformerType = typeof(ITransformer);
+        
+        var transformerTypes = assemblies
+            .SelectMany(a => a.GetTypes())
+            .Where(t => transformerType.IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+        var transformers = new List<ITransformer>();
+        foreach (var type in transformerTypes)
+        {
+            if (Activator.CreateInstance(type) is not ITransformer instance)
+                throw new InvalidOperationException($"{type.Name} does not implement ITransformer");
+
+            instance.InitializeAndRegister(builder.Services);
+            transformers.Add(instance);
+        }
+        
+        builder.Services.AddSingleton<IReadOnlyList<ITransformer>>(transformers);
     }
 
     private static void RegisterPages(IServiceCollection serviceCollection)

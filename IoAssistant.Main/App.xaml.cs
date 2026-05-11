@@ -8,10 +8,6 @@ namespace IoAssistant.Main;
 
 public partial class App : Application
 {
-    // private ModBusRtuClient modBusRtuClient;
-    // private ModBusTcpClient modBusTcpClient;
-    private Task? _initTask;
-
     public App()
     {
         InitializeComponent();

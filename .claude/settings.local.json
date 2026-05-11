@@ -16,7 +16,12 @@
       "Read(//mnt/d/**)",
       "Bash(xargs grep:*)",
       "Bash(xargs -I{} sh -c \"unzip -p \"\"{}\"\" 2>/dev/null | strings 2>/dev/null | grep -i \"\"CheckBoxState\"\"\")",
-      "Bash(find D:/Git/IoAssistant -path */packages* -name Syncfusion.Maui.Buttons*)"
+      "Bash(find D:/Git/IoAssistant -path */packages* -name Syncfusion.Maui.Buttons*)",
+      "Bash(find /d/Git/IoAssistant -type f -name *.resfiles)",
+      "Bash(find /d/Git/IoAssistant -type f -name *.props -o -name *.targets)",
+      "Bash(/tmp/analyze_pri.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(ls \"D:\\\\Git\\\\IoAssistant\\\\IoAssistant.PnP\\\\obj\\\\Debug\\\\net10.0-android\\\\ref\"\" 2>&1; ls \"D:GitIoAssistantIoAssistant.PnPobjDebugnet10.0-android\"\")"
     ]
   }
 }

@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Transformers/">
+    <Project Path="EmaTransformer/EmaTransformer.csproj" />
+    <Project Path="IoAssistant.PnP/IoAssistant.PnP.csproj" />
+  </Folder>
   <Project Path="Database/Database.csproj" />
   <Project Path="Desktop/Desktop.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
