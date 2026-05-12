@@ -9,6 +9,7 @@ using IoAssistant.Infrastructure.Services;
 using IoAssistant.Infrastructure.ViewModels;
 using IoAssistant.Main.Services;
 using IoAssistant.PnP;
+using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Syncfusion.Maui.Core.Hosting;
@@ -50,6 +51,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<Storage>();
         builder.Services.AddSingleton<DeviceService>();
         builder.Services.AddSingleton<ModBusClientService>();
+        builder.Services.AddSingleton<TransformerService>();
 
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "ioassistant.db");
         builder.Services.AddSingleton(_ => new DeviceRepository(dbPath));
@@ -73,7 +75,7 @@ public static class MauiProgram
 #endif
 
         var app = builder.Build();
-
+        
         return app;
     }
 

@@ -1,7 +1,10 @@
-﻿using IoAssistant.Database;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using IoAssistant.Database;
 using IoAssistant.Database.Repositories;
 using IoAssistant.Infrastructure.Devices;
+using IoAssistant.Infrastructure.Messages;
 using IoAssistant.Infrastructure.Services;
+using IoAssistant.Main.Extensions;
 using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Core;
@@ -147,7 +150,7 @@ public partial class App : Application
     protected override async void OnStart()
     {
         base.OnStart();
-        
+
         var seeder = AppService.GetRequiredService<DatabaseSeeder>();
         var projectRepository = AppService.GetRequiredService<ProjectRepository>();
         var deviceRepository = AppService.GetRequiredService<DeviceRepository>();
@@ -155,6 +158,7 @@ public partial class App : Application
         var transformerRepository = AppService.GetRequiredService<TransformerRepository>();
         var modBusClientRepository = AppService.GetRequiredService<ModBusClientRepository>();
         var deviceService = AppService.GetRequiredService<DeviceService>();
+        var transformerService = AppService.GetRequiredService<TransformerService>();
         var transformers = AppService.GetRequiredService<IReadOnlyList<ITransformer>>();
         await seeder.SeedAsync();
 
@@ -166,24 +170,10 @@ public partial class App : Application
         var projectEntities = await projectRepository.GetAllAsync();
         var project = projectEntities.First();
 
-        var listOfDevices = await deviceRepository.GetByProjectAsync(project.Id, clientsById);
-        
-        foreach (var device in listOfDevices)
-        {
-            deviceService.AddDevice(device);
-            
-            var listOfSensors = await sensorRepository.GetByDeviceAsync(device);
-        
-            foreach (var sensor in listOfSensors)
-            {
-                device.AddSensor(sensor);
-            }
-            
-            device.Start();
-        }
+        AppService.Current!.InitializeTransformers();
 
         var transformersDb = await transformerRepository.GetByProjectAsync(project.Id);
-        
+
         foreach (var transformerDb in transformersDb)
         {
             var transformer = transformers.SingleOrDefault(s => s.Id == transformerDb.BelongToId);
@@ -193,10 +183,35 @@ public partial class App : Application
                 throw new InvalidOperationException($"Transformer with id {transformerDb.Id} not found");
             }
 
-            transformer.CreateInstance(transformerDb.Data);
+            var calculationEngine = transformer.CreateInstance(transformerDb.Id, transformerDb.BelongToId,
+                transformerDb.ProjectId,
+                transformerDb.Name, transformerDb.Description, transformerDb.Data);
+
+            transformerService.AddTransformer(calculationEngine);
         }
+        
+        var listOfDevices = await deviceRepository.GetByProjectAsync(project.Id, clientsById);
+
+        foreach (var device in listOfDevices)
+        {
+            deviceService.AddDevice(device);
+
+            var listOfSensors = await sensorRepository.GetByDeviceAsync(device);
+
+            foreach (var sensor in listOfSensors)
+            {
+                device.AddSensor(sensor);
+            }
+
+            device.Start();
+        }
+
+
+
+        var currentProject = new Project(project.Id, project.Name, project.Description);
+        WeakReferenceMessenger.Default.Send<IOnProjectLoadedMessage>(new OnProjectLoadedMessage(currentProject));
     }
-    
+
     // protected override async void OnStart()
     // {
     //     base.OnStart();

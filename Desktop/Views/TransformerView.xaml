@@ -14,7 +14,7 @@
         <syncfusion:SfDataGrid
             Grid.Column="0"
             HorizontalOptions="Fill"
-            ItemsSource="{Binding Transformers}"
+            ItemsSource="{Binding CalculationEngines}"
             AutoGenerateColumnsMode="None"
             SelectionMode="Single"
             NavigationMode="Row"
@@ -22,9 +22,9 @@
             SelectionChanged="OnTransformerSelected">
 
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:DataGridTextColumn MappingName="Name" HeaderText="Name" />
-                <syncfusion:DataGridTextColumn MappingName="Inputs" HeaderText="Inputs" HeaderTextAlignment="Center" CellTextAlignment="Center"/>
-                <syncfusion:DataGridTextColumn MappingName="Description" HeaderText="Description" />
+                <syncfusion:DataGridTextColumn MappingName="Name" HeaderText="Name" LineBreakMode="TailTruncation" Width="180" />
+                <syncfusion:DataGridTextColumn MappingName="Transformer.Inputs" HeaderText="Inputs" HeaderTextAlignment="Center" CellTextAlignment="Center"/>
+                <syncfusion:DataGridTextColumn MappingName="Description" HeaderText="Description" LineBreakMode="TailTruncation"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

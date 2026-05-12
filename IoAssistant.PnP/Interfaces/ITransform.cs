@@ -12,13 +12,24 @@ public interface ITransformer
 
     public ContentView Configuration { get; }
     
-    public void InitializeAndRegister(IServiceCollection services);
+    public void Register(IServiceCollection services);
+    public void Initialize();
     
-    ICalculate CreateInstance(string transformerDbData);
+    ICalculationEngine CreateInstance(Guid transformerInstanceId, Guid belongToId, Guid projectId, string name, string description, string data);
 }
 
-public interface ICalculate
+public interface ICalculationEngine
 {
     public ITransformer Transformer { get; }
     public decimal CalculatedValue { get; }
+
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public Guid BelongToId { get; set; }
+    public Guid ProjectId { get; set; }
+    
+    public void FromJson(string json);
+    public string ToJson();
+
 }

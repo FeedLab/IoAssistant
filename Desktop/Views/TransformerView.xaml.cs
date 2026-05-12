@@ -32,12 +32,13 @@ public partial class TransformerView : ContentView
 
     private void OnTransformerSelected(object sender, DataGridSelectionChangedEventArgs e)
     {
-        if (e.AddedRows?.FirstOrDefault() is ITransformer transformer)
+        if (e.AddedRows?.FirstOrDefault() is ICalculationEngine selectedCalculationEngine)
         {
-            logger.LogInformation("Selected transformer: {Transformer}", transformer.Name);
+            logger.LogInformation("Selected calculationEngine: {CalculationEngine}", selectedCalculationEngine.Name);
             
-            viewModel.SelectedTransformer = transformer;
-            TransformerPlaceholder.Content = transformer.Configuration;
+            viewModel.SelectedTransformer = selectedCalculationEngine.Transformer;
+            TransformerPlaceholder.Content = selectedCalculationEngine.Transformer.Configuration;
+            TransformerPlaceholder.Content.BindingContext = selectedCalculationEngine;
         }
         else
         {

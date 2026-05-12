@@ -22,11 +22,19 @@ public static class TransformerExtensions
             if (Activator.CreateInstance(type) is not ITransformer instance)
                 throw new InvalidOperationException($"{type.Name} does not implement ITransformer");
 
-            instance.InitializeAndRegister(builder.Services);
+            instance.Register(builder.Services);
             transformers.Add(instance);
         }
 
         builder.Services.AddSingleton<IReadOnlyList<ITransformer>>(transformers);
         return builder;
+    }
+
+    public static void InitializeTransformers(this IServiceProvider services)
+    {
+        foreach (var transformer in services.GetRequiredService<IReadOnlyList<ITransformer>>())
+        {
+            transformer.Initialize();
+        }
     }
 }

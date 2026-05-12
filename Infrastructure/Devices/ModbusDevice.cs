@@ -43,7 +43,7 @@ public partial class ModbusDevice : ObservableObject, IModbusDevice
     
     [ObservableProperty] private ushort functionCode;
     
-    [ObservableProperty] private readonly List<ISensor> sensors = [];
+    [ObservableProperty] private List<ISensor> sensors = [];
 
 
     public ModbusDevice(

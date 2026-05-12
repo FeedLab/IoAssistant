@@ -1,6 +1,6 @@
 ﻿namespace IoAssistant.PnP
 {
-    public static class AppService
+    public static class AppServicePnP
     {
         /// <summary>
         /// Gets the service object of the specified type.
