@@ -22,14 +22,19 @@ public interface ICalculationEngine
 {
     public ITransformer Transformer { get; }
     public decimal CalculatedValue { get; }
+    public decimal OriginalValue { get; }
+    public decimal Alpha { get; set; }
+    public int Period { get; set; }
 
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public Guid BelongToId { get; set; }
     public Guid ProjectId { get; set; }
+    public Guid SensorId { get; set; }
     
     public void FromJson(string json);
     public string ToJson();
 
+    void SelectedSensorChanger(ISensor sensor);
 }

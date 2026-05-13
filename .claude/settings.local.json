@@ -21,7 +21,16 @@
       "Bash(find /d/Git/IoAssistant -type f -name *.props -o -name *.targets)",
       "Bash(/tmp/analyze_pri.txt:*)",
       "Read(//tmp/**)",
-      "Bash(ls \"D:\\\\Git\\\\IoAssistant\\\\IoAssistant.PnP\\\\obj\\\\Debug\\\\net10.0-android\\\\ref\"\" 2>&1; ls \"D:GitIoAssistantIoAssistant.PnPobjDebugnet10.0-android\"\")"
+      "Bash(ls \"D:\\\\Git\\\\IoAssistant\\\\IoAssistant.PnP\\\\obj\\\\Debug\\\\net10.0-android\\\\ref\"\" 2>&1; ls \"D:GitIoAssistantIoAssistant.PnPobjDebugnet10.0-android\"\")",
+      "Bash(grep -r SelectionChanged D:/Git/IoAssistant --include=*.cs -l)",
+      "Bash(find D:/Git/IoAssistant -path */packages/Syncfusion.Maui.Inputs* -name *.dll)",
+      "Bash(powershell -command \"Add-Type -Path ''''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll''''; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_Name -like ''''*Selection*'''' } | ForEach-Object { $_Name + '''': '''' + $_EventHandlerType }\")",
+      "Bash(powershell -command \"Add-Type -Path ''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll'' -ErrorAction SilentlyContinue; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_.Name -like ''*Selection*'' } | ForEach-Object { $_.Name + '': '' + $_.EventHandlerType }\")",
+      "Bash(cmd.exe /c \"powershell -command \"\"Add-Type -Path ''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll'' -ErrorAction SilentlyContinue; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_.Name -like ''*Selection*'' } | ForEach-Object { $_.Name + '': '' + $_.EventHandlerType }\"\"\")",
+      "Bash(/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Add-Type -Path ''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll'' -ErrorAction SilentlyContinue; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_.Name -like ''*Selection*'' } | ForEach-Object { $_.Name + '': '' + $_.EventHandlerType }\")",
+      "Bash(/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Add-Type -Path ''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll'' -ErrorAction SilentlyContinue; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_.Name -like ''*Selection*'' } | ForEach-Object { $_.Name + '': '' + $_.EventHandlerType }\")",
+      "Bash(grep -r Nullable D:/Git/IoAssistant/EmaTransformer/*.csproj D:/Git/IoAssistant/*.csproj)",
+      "Bash(grep -i selectionchanged /c/Users/jompa/.nuget/packages/syncfusion.maui.inputs/33.2.6/lib/*/Syncfusion.Maui.Inputs.xml)"
     ]
   }
 }

@@ -183,16 +183,15 @@ public class BoundedChartData : IList<SensorDataPoint>, INotifyCollectionChanged
             removeCount++;
 
         if (removeCount > 0)
+        {
             items.RemoveRange(0, removeCount);
-
-        items.Add(item);
-
-        if (removeCount > 0)
             CollectionChanged?.Invoke(this,
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        else
-            CollectionChanged?.Invoke(this,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, items.Count - 1));
+        }
+
+        items.Add(item);
+        CollectionChanged?.Invoke(this,
+            new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, items.Count - 1));
     }
 
     public int IndexOf(SensorDataPoint item) => items.IndexOf(item);

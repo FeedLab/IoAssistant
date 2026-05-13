@@ -2,11 +2,169 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:gauge="clr-namespace:Syncfusion.Maui.Gauges;assembly=Syncfusion.Maui.Gauges"
+             xmlns:combobox="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
              x:Class="IoAssistant.Transformers.EmaConfigurationView">
-    
-    
-    <Label
-        HorizontalOptions="Center"
-        VerticalOptions="Center"
-        Text="EMA Transformer Configuration"/>
+
+    <ContentView.Resources>
+        <gauge:GaugeLabelStyle x:Key="LabelStyle" FontSize="14" />
+    </ContentView.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <VerticalStackLayout
+            Grid.Row="0"
+            Padding="20"
+            Spacing="20">
+
+            <!-- Header -->
+            <Label Text="Exponential Moving Average (EMA)"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="Black" />
+
+            <!-- Fast EMA Section -->
+            <Border Stroke="Blue"
+                    StrokeThickness="2"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Fast EMA (Short-Term)"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           TextColor="Blue" />
+                    <Label Text="• Goal: Immediate responsiveness" FontSize="12" />
+                    <Label Text="• Behavior: Reacts quickly to new values by weighting recent data heavily"
+                           FontSize="12" />
+                    <Label Text="• Best for: Catching short-term swings and early reversals" FontSize="12" />
+                    <Label Text="• Trade-off: Prone to noise and false signals" FontSize="12" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Slow EMA Section -->
+            <Border Stroke="Green"
+                    StrokeThickness="2"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Slow EMA (Long-Term)"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           TextColor="Green" />
+                    <Label Text="• Goal: Stability and trend clarity" FontSize="12" />
+                    <Label Text="• Behavior: Moves gradually by averaging data over a longer period" FontSize="12" />
+                    <Label Text="• Best for: Identifying overall direction and filtering out volatility" FontSize="12" />
+                    <Label Text="• Trade-off: Lags behind current price action" FontSize="12" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+
+        <Grid
+            Grid.Row="1"
+
+            ColumnDefinitions="1*,1*">
+
+            <VerticalStackLayout
+                Grid.Column="0"
+                Padding="20"
+                Spacing="10">
+                <Label Text="Select Sensor to act on"
+                       FontSize="16"
+                       FontAttributes="Bold" />
+                <combobox:SfComboBox
+                    ItemsSource="{Binding Sensors}"
+                    DisplayMemberPath="FullName"
+                    IsClearButtonVisible="False"
+                    SelectedItem="{Binding SensorToReactOn, Mode=TwoWay}"
+                    Placeholder="Choose a sensor..."
+                    HorizontalOptions="Fill" />
+            </VerticalStackLayout>
+            
+            <gauge:SfRadialGauge
+                Grid.Column="1"
+                Margin="0,0,0,0"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <gauge:SfRadialGauge.Axes>
+                    <gauge:RadialAxis Minimum="0"
+                                      Maximum="1"
+                                      ShowLabels="False"
+                                      ShowAxisLine="False"
+                                      ShowTicks="False">
+
+                        <!-- Corrected ranges to match 0–1 axis -->
+                        <gauge:RadialAxis.Ranges>
+                            <gauge:RadialRange StartValue="0"
+                                               EndValue="0.33"
+                                               Label="Smoother"
+                                               WidthUnit="Factor"
+                                               StartWidth="0.35"
+                                               EndWidth="0.35"
+                                               LabelStyle="{StaticResource LabelStyle}"
+                                               Fill="#FFFE2A25" />
+                            <gauge:RadialRange StartValue="0.33"
+                                               EndValue="0.66"
+                                               Label="Moderate"
+                                               WidthUnit="Factor"
+                                               StartWidth="0.35"
+                                               EndWidth="0.35"
+                                               LabelStyle="{StaticResource LabelStyle}"
+                                               Fill="#FFFFBA00" />
+                            <gauge:RadialRange StartValue="0.66"
+                                               EndValue="1"
+                                               Label="Faster"
+                                               WidthUnit="Factor"
+                                               StartWidth="0.35"
+                                               EndWidth="0.35"
+                                               LabelStyle="{StaticResource LabelStyle}"
+                                               Fill="#FF00AB47" />
+                            <gauge:RadialRange StartValue="0"
+                                               EndValue="1"
+                                               WidthUnit="Factor"
+                                               StartWidth="0.15"
+                                               EndWidth="0.15"
+                                               OffsetUnit="Factor"
+                                               RangeOffset="0.50"
+                                               Fill="#4D9b9b9b" />
+                        </gauge:RadialAxis.Ranges>
+
+                        <!-- Interactive pointer -->
+                        <gauge:RadialAxis.Pointers>
+                            <!-- Needle shows the value -->
+                            <gauge:NeedlePointer Value="{Binding Alpha}"
+                                                 EnableAnimation="True"
+                                                 AnimationDuration="0.5"
+                                                 NeedleLength="0.6"
+                                                 NeedleStartWidth="2"
+                                                 NeedleEndWidth="15"
+                                                 KnobRadius="15"
+                                                 KnobSizeUnit="Pixel" />
+
+                            <!-- ShapePointer lets user drag/tap -->
+                            <gauge:ShapePointer x:Name="InteractiveMarker"
+                                                Value="{Binding Alpha}"
+                                                IsInteractive="True"
+                                                ShapeType="Circle"
+                                                ShapeHeight="20"
+                                                ShapeWidth="20"
+                                                Fill="Orange"
+                                                Stroke="Black"
+                                                BorderWidth="2"
+                                                ValueChanged="InteractiveMarker_ValueChanged" />
+                        </gauge:RadialAxis.Pointers>
+                    </gauge:RadialAxis>
+                </gauge:SfRadialGauge.Axes>
+            </gauge:SfRadialGauge>
+
+        </Grid>
+    </Grid>
+
+
 </ContentView>

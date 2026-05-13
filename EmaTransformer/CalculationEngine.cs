@@ -1,4 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using IoAssistant.PnP;
 using IoAssistant.PnP.Interfaces;
@@ -6,29 +10,31 @@ using Microsoft.Extensions.Logging;
 
 namespace IoAssistant.Transformers;
 
-public class CalculationEngine : ICalculationEngine
+[SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0045:Using [ObservableProperty] on fields is not AOT compatible for WinRT")]
+public partial class CalculationEngine : ObservableObject, ICalculationEngine
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public Guid BelongToId { get; set; }
+    [ObservableProperty] private Guid id;
+    [ObservableProperty] private string name;
+    [ObservableProperty] private string description;
+    [ObservableProperty] private Guid belongToId;
 
-    public decimal Alpha { get; set; }
-    public int Period { get; set; } = 5;
-    public bool IsEnabled { get; set; } = true;
-    public Guid SensorId { get; set; }
+    [ObservableProperty] private decimal alpha;
+    [ObservableProperty] private int period;
+    [ObservableProperty] private bool isEnabled;
+    [ObservableProperty] private Guid sensorId;
+    [ObservableProperty] private ISensor? sensorToReactOn;
 
-    public decimal CalculatedValue { get; set; }
+    [ObservableProperty] private decimal calculatedValue;
+    [ObservableProperty] private decimal originalValue;
 
     public ITransformer Transformer { get; set; }
     public Guid ProjectId { get; set; }
 
-    private EmaStream emaStream;
-    private ISensor? sensorToReactOn;
+    private readonly EmaStream emaStream;
     private readonly ILogger<CalculationEngine> logger;
-    private List<ISensor> sensors = [];
+    public ObservableCollection<ISensor> Sensors { get; } = [];
 
-    public CalculationEngine(ITransformer transformer, Guid instanceId, Guid projectId, 
+    public CalculationEngine(ITransformer transformer, Guid instanceId, Guid projectId,
         string name, string description, string data)
     {
         logger = AppServicePnP.GetRequiredService<ILogger<CalculationEngine>>();
@@ -39,11 +45,11 @@ public class CalculationEngine : ICalculationEngine
         ProjectId = projectId;
         Description = description;
         Name = name;
-        
+
         FromJson(data);
-        
+
         emaStream = new EmaStream(Period, Alpha);
-        
+
         SubscribeToOnSensorDataChangedMessage();
         SubscribeToOnSensorAddedMessage();
     }
@@ -52,11 +58,11 @@ public class CalculationEngine : ICalculationEngine
     {
         WeakReferenceMessenger.Default.Register<IOnSensorAddedMessage>(this, async void (recipient, m) =>
         {
-            sensors.Add(m.Sensor);
-            
-            if(SensorId == m.Sensor.Id)
+            Sensors.Add(m.Sensor);
+
+            if (SensorId == m.Sensor.Id)
             {
-                sensorToReactOn = m.Sensor;
+                SensorToReactOn = m.Sensor;
             }
         });
     }
@@ -74,6 +80,11 @@ public class CalculationEngine : ICalculationEngine
         }
     }
 
+    // partial void OnSensorIdChanged(Guid value)
+    // {
+    //     sensorToReactOn = Sensors.FirstOrDefault(s => s.Id == value);
+    // }
+
     private record EmaData(decimal Alpha, int Period, bool IsEnabled, Guid SensorId);
 
 
@@ -82,11 +93,16 @@ public class CalculationEngine : ICalculationEngine
         return JsonSerializer.Serialize(new { Alpha, Period, IsEnabled, SensorId });
     }
 
+    public void SelectedSensorChanger(ISensor sensor)
+    {
+        SensorToReactOn = sensor;
+    }
+
     private void SubscribeToOnSensorDataChangedMessage()
     {
         WeakReferenceMessenger.Default.Register<IOnSensorDataChangedMessage>(this, (recipient, m) =>
         {
-            if (sensorToReactOn == null)
+            if (SensorToReactOn == null)
             {
                 logger.LogError("Sensor to react on not set");
                 return;
@@ -95,9 +111,13 @@ public class CalculationEngine : ICalculationEngine
             if (!m.HasChanged || m.Sensor.Id != sensorToReactOn.Id)
                 return;
 
-            CalculatedValue = emaStream.AddPoint(m.Sensor.Value);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                OriginalValue = m.Sensor.Value;
+                CalculatedValue = emaStream.AddPoint(m.Sensor.Value);
+            });
+            
             logger.LogDebug("EMA Value: {Value}", CalculatedValue);
         });
     }
-
 }

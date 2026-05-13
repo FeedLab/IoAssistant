@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using DecimalMath;
 using IoAssistant.Infrastructure.Messages;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IoAssistant.Infrastructure.Devices;
 
+[SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0045:Using [ObservableProperty] on fields is not AOT compatible for WinRT")]
 public partial class Sensor : ObservableObject, ISensor
 {
     private readonly ILogger<ISensor> logger = AppService.GetRequiredService<ILogger<ISensor>>();
@@ -18,6 +20,7 @@ public partial class Sensor : ObservableObject, ISensor
 
     [ObservableProperty] private IModbusDevice modbusDevice;
     [ObservableProperty] private string name;
+    [ObservableProperty] private string fullName;
     [ObservableProperty] private string unit;
     [ObservableProperty] private ushort numRegister;
     [ObservableProperty] private decimal value;
@@ -31,6 +34,7 @@ public partial class Sensor : ObservableObject, ISensor
         ModbusDevice = modbusDevice;
         NumRegister = numRegister;
         Name = name;
+        FullName = $"{modbusDevice.Name} - {name}";
         Unit = unit;
         Direction = direction;
     }

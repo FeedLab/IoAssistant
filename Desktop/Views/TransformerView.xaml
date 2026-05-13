@@ -24,6 +24,8 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:DataGridTextColumn MappingName="Name" HeaderText="Name" LineBreakMode="TailTruncation" Width="180" />
                 <syncfusion:DataGridTextColumn MappingName="Transformer.Inputs" HeaderText="Inputs" HeaderTextAlignment="Center" CellTextAlignment="Center"/>
+                <syncfusion:DataGridTextColumn MappingName="OriginalValue" HeaderText="Original Value" HeaderTextAlignment="Center" CellTextAlignment="Center" Format="N2"/>
+                <syncfusion:DataGridTextColumn MappingName="CalculatedValue" HeaderText="Calculated Value" HeaderTextAlignment="Center" CellTextAlignment="Center" Format="N2"/>
                 <syncfusion:DataGridTextColumn MappingName="Description" HeaderText="Description" LineBreakMode="TailTruncation"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>

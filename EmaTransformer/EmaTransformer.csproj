@@ -29,6 +29,9 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
+        <PackageReference Include="Syncfusion.Maui.Gauges" Version="33.2.6" />
+        <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2" />
+        <PackageReference Include="Syncfusion.Maui.Inputs" Version="33.2.6" />
     </ItemGroup>
 
     <ItemGroup>
