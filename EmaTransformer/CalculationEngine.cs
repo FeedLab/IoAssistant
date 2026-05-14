@@ -17,6 +17,7 @@ public partial class CalculationEngine : ObservableObject, ICalculationEngine
     [ObservableProperty] private string name;
     [ObservableProperty] private string fullName;
     [ObservableProperty] private string description;
+    [ObservableProperty] private Guid id;
     [ObservableProperty] private Guid belongToId;
 
     [ObservableProperty] private decimal alpha;
@@ -44,7 +45,7 @@ public partial class CalculationEngine : ObservableObject, ICalculationEngine
         doNotSave = true;
 
         Transformer = transformer;
-        SensorId = instanceId;
+        Id = instanceId;
         BelongToId = transformer.Id;
         ProjectId = projectId;
         Description = description;

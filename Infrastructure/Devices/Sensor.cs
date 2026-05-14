@@ -59,4 +59,6 @@ public partial class Sensor : ObservableObject, ISensor
 
         WeakReferenceMessenger.Default.Send<IOnSensorDataChangedMessage>(new OnSensorDataChangedMessage(this, Value, oldRegisterValue));
     }
+
+    public override string ToString() => FullName;
 }

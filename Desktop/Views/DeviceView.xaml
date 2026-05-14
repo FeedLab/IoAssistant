@@ -7,6 +7,7 @@
              xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
              xmlns:vm="clr-namespace:IoAssistant.Infrastructure.ViewModels;assembly=Infrastructure"
              xmlns:views="clr-namespace:IoAssistant.Device.Desktop.Views"
+             xmlns:dataSource="http://schemas.syncfusion.com/maui"
              x:Class="IoAssistant.Device.Desktop.Views.DeviceView">
 
     <Grid
@@ -29,8 +30,33 @@
                 SelectionMode="Single"
                 Background="Transparent"
                 AutoFitMode="DynamicHeight"
+                AllowGroupExpandCollapse="True"
                 ItemDoubleTapped="OnDeviceDoubleTapped">
-
+                
+                <listView:SfListView.DataSource>
+                    <dataSource:DataSource>
+                        <dataSource:DataSource.GroupDescriptors>
+                            <dataSource:GroupDescriptor PropertyName="ModbusDevice.ModBusClient.Name"/>
+                        </dataSource:DataSource.GroupDescriptors>
+                    </dataSource:DataSource>
+                </listView:SfListView.DataSource>
+                
+                <!-- Group header -->
+                <listView:SfListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Grid BackgroundColor="#E4E4E4" Padding="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Label 
+                                Text="{Binding Key}"
+                                TextColor="Black" 
+                                FontAttributes="Bold"/>
+                        </Grid>
+                    </DataTemplate>
+                </listView:SfListView.GroupHeaderTemplate>
+                
                 <listView:SfListView.ItemTemplate>
                     <DataTemplate x:DataType="vm:ModbusDeviceViewModel">
                         <views:ModbusDeviceItemView />

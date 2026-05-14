@@ -22,4 +22,5 @@ public class ModBusClientEntity
     public int DataBits { get; set; } = 8;
     public Parity Parity { get; set; } = Parity.None;
     public StopBits StopBits { get; set; } = StopBits.One;
+    public string Name { get; set; } = "ModBusClient";
 }

@@ -16,7 +16,8 @@ public class DatabaseSeeder(
 {
     public async Task SeedAsync()
     {
-        return ;
+        return;
+        
         await modBusClientRepository.InitializeAsync();
         await projectRepository.InitializeAsync();
         await deviceRepository.InitializeAsync();
@@ -34,8 +35,8 @@ public class DatabaseSeeder(
         if (projects.Count > 0)
             return;
 
-        var modBusTcpClient = new ModBusTcpClient("192.168.68.75", 8899);
-        var modBusRtuClient = new ModBusRtuClient();
+        var modBusTcpClient = new ModBusTcpClient("192.168.68.75", 8899, "ModBusTcpClient");
+        var modBusRtuClient = new ModBusRtuClient("ModBusRtuClient");
 
         await modBusClientRepository.AddAsync(modBusTcpClient);
         await modBusClientRepository.AddAsync(modBusRtuClient);

@@ -43,15 +43,16 @@ public class ModBusClientRepository
     private static ModBusClient ToDomain(ModBusClientEntity entity) =>
         entity.Type switch
         {
-            CommunicationType.ModbusTcp => new ModBusTcpClient(entity.Host!, entity.Port) { Id = entity.Id },
-            CommunicationType.ModbusRtu => new ModBusRtuClient
+            CommunicationType.ModbusTcp => new ModBusTcpClient(entity.Host!, entity.Port, entity.Name) { Id = entity.Id },
+            CommunicationType.ModbusRtu => new ModBusRtuClient(entity.Name)
             {
                 PortName = entity.PortName!,
                 BaudRate = entity.BaudRate,
                 DataBits = entity.DataBits,
                 Parity = entity.Parity,
                 StopBits = entity.StopBits,
-                Id = entity.Id
+                Id = entity.Id,
+                Name = entity.Name
             },
             _ => throw new ArgumentOutOfRangeException(nameof(entity.Type), entity.Type, "Unknown client type")
         };
@@ -62,13 +63,14 @@ public class ModBusClientRepository
             ModBusTcpClient tcp => new ModBusClientEntity
             {
                 Id = tcp.Id,
-                Type = CommunicationType.ModbusTcp,
                 Host = tcp.Host,
                 Port = tcp.Port,
+                Type = CommunicationType.ModbusTcp,
             },
             ModBusRtuClient rtu => new ModBusClientEntity
             {
                 Id = rtu.Id,
+                Name = rtu.Name,
                 Type = CommunicationType.ModbusRtu,
                 PortName = rtu.PortName,
                 BaudRate = rtu.BaudRate,

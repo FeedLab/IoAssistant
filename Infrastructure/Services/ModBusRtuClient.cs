@@ -23,9 +23,10 @@ public partial class ModBusRtuClient : ModBusClient
     private SerialPort? serialPort;
     private readonly ILogger<ModBusRtuClient> logger = AppService.GetRequiredService<ILogger<ModBusRtuClient>>();
 
-    public ModBusRtuClient() : base()   
+    public ModBusRtuClient(string name) : base()   
     {
         CommunicationType = CommunicationType.ModbusRtu;
+        Name = name;
     }
 
     public override void Start()

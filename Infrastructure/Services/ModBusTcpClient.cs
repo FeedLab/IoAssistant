@@ -15,12 +15,13 @@ public partial class ModBusTcpClient : ModBusClient
     private TcpClient? tcpClient;
     private readonly ILogger<ModBusTcpClient> logger = AppService.GetRequiredService<ILogger<ModBusTcpClient>>();
 
-    public ModBusTcpClient(string host, ushort port)
+    public ModBusTcpClient(string host, ushort port, string name)
     {
         CommunicationType = CommunicationType.ModbusTcp;
         
         Host = host;
         Port = port;
+        Name = name;
     }
 
     public override void Start()

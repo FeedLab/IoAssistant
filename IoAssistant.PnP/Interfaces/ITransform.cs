@@ -29,9 +29,11 @@ public interface ICalculationEngine
     public string Name { get; set; }
     public string FullName { get; set; }
     public string Description { get; set; }
+    public Guid Id { get; set; }
     public Guid BelongToId { get; set; }
     public Guid ProjectId { get; set; }
     public Guid SensorId { get; set; }
+    public ISensor? SensorToReactOn { get; set; }
     
     public void FromJson(string json);
     public string ToJson();

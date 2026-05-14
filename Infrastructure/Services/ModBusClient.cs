@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Diagnostics.CodeAnalysis;
+using CommunityToolkit.Mvvm.ComponentModel;
 using IoAssistant.PnP;
 using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -6,11 +7,13 @@ using NModbus;
 
 namespace IoAssistant.Infrastructure.Services;
 
+[SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0045:Using [ObservableProperty] on fields is not AOT compatible for WinRT")]
 public abstract partial class ModBusClient : ObservableObject, IModBusClient
 {
     public Guid Id { get; set; } = Guid.CreateVersion7();
     public Lock BusLock { get; set; } = new();
 
+    [ObservableProperty] private string name  = "ModBusClient";
     [ObservableProperty] private bool isInitialized;
     [ObservableProperty] private int readTimeout = 2000;
     [ObservableProperty] private CommunicationType communicationType = CommunicationType.ModbusTcp;

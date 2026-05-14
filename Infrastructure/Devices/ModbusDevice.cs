@@ -24,6 +24,8 @@ public partial class ModbusDevice : ObservableObject, IModbusDevice
     [ObservableProperty] private string status = "Status: OK";
 
     [ObservableProperty] private string name = "Device - Unknown";
+    
+    [ObservableProperty] private string fullName = "Client - Unknown";
 
     [ObservableProperty] private byte deviceId;
 
@@ -59,6 +61,7 @@ public partial class ModbusDevice : ObservableObject, IModbusDevice
     {
         ModBusClient = modBusClient;
         Name = name;
+        FullName = $"{modBusClient.Name} - {name}";
         DeviceId = deviceId;
         StartRegister = startRegister;
         RegistersToRead = registersToRead;

@@ -9,6 +9,8 @@ public interface IModBusClient
     Lock BusLock { get; set; }
 
     bool IsInitialized { get; set; }
+    
+    string Name { get; set; }
 
     int ReadTimeout { get; set; }
 

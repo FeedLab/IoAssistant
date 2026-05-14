@@ -29,7 +29,15 @@
                     SelectionMode="Single"
                     NavigationMode="Row"
                     ColumnWidthMode="LastColumnFill"
+                    GroupCaptionTextFormat=": {Key}"
                     SelectionChanged="OnTransformerSelected">
+
+                    <syncfusion:SfDataGrid.GroupColumnDescriptions>
+                        <syncfusion:GroupColumnDescription 
+                            ColumnName="SensorToReactOn.ModbusDevice.FullName" 
+                            SortGroupRecords="True" 
+                            />
+                    </syncfusion:SfDataGrid.GroupColumnDescriptions>
 
                     <syncfusion:SfDataGrid.Columns>
                         <syncfusion:DataGridTemplateColumn

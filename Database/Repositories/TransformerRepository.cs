@@ -25,7 +25,7 @@ public class TransformerRepository
                 var record = new TransformerRecord
                 {
                     BelongToId = m.CalculationEngine.BelongToId,
-                    Id = m.CalculationEngine.SensorId,
+                    Id = m.CalculationEngine.Id,
                     Name = m.CalculationEngine.Name,
                     Description = m.CalculationEngine.Description,
                     ProjectId = m.CalculationEngine.ProjectId,
