@@ -16,10 +16,13 @@ public class TransformerViewModel
     {
         WeakReferenceMessenger.Default.Register<IOnProjectLoadedMessage>(this, (recipient, m) =>
         {
-            foreach (var transformer in transformerService.GetTransformers())
+            MainThread.BeginInvokeOnMainThread(() =>
             {
-                CalculationEngines.Add(transformer);
-            }
+                foreach (var transformer in transformerService.GetTransformers())
+                {
+                    CalculationEngines.Add(transformer);
+                }
+            });
         });
         
 

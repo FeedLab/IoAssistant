@@ -7,15 +7,24 @@ using IoAssistant.Infrastructure.Services;
 using IoAssistant.Main.Extensions;
 using IoAssistant.PnP.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog.Core;
 
 namespace IoAssistant.Main;
 
 public partial class App : Application
 {
+    private ILogger<App> logger;
+
     public App()
     {
         InitializeComponent();
+        
+        // Catch exceptions from background threads
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            System.Diagnostics.Debug.WriteLine($"AppDomain UnhandledException: {e.ExceptionObject}");
+        };
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -149,67 +158,77 @@ public partial class App : Application
 
     protected override async void OnStart()
     {
-        base.OnStart();
-
-        var seeder = AppService.GetRequiredService<DatabaseSeeder>();
-        var projectRepository = AppService.GetRequiredService<ProjectRepository>();
-        var deviceRepository = AppService.GetRequiredService<DeviceRepository>();
-        var sensorRepository = AppService.GetRequiredService<SensorRepository>();
-        var transformerRepository = AppService.GetRequiredService<TransformerRepository>();
-        var modBusClientRepository = AppService.GetRequiredService<ModBusClientRepository>();
-        var deviceService = AppService.GetRequiredService<DeviceService>();
-        var transformerService = AppService.GetRequiredService<TransformerService>();
-        var transformers = AppService.GetRequiredService<IReadOnlyList<ITransformer>>();
-        await seeder.SeedAsync();
-
-        var clients = await modBusClientRepository.GetAllAsync();
-        var clientsById = clients.ToDictionary(c => c.Id);
-        foreach (var client in clients)
-            client.Start();
-
-        var projectEntities = await projectRepository.GetAllAsync();
-        var project = projectEntities.First();
-
-        AppService.Current!.InitializeTransformers();
-
-        var transformersDb = await transformerRepository.GetByProjectAsync(project.Id);
-
-        foreach (var transformerDb in transformersDb)
+        try
         {
-            var transformer = transformers.SingleOrDefault(s => s.Id == transformerDb.BelongToId);
+            logger = AppService.GetRequiredService<ILogger<App>>();
+            
+            base.OnStart();
 
-            if (transformer is null)
+            var seeder = AppService.GetRequiredService<DatabaseSeeder>();
+            var projectRepository = AppService.GetRequiredService<ProjectRepository>();
+            var deviceRepository = AppService.GetRequiredService<DeviceRepository>();
+            var sensorRepository = AppService.GetRequiredService<SensorRepository>();
+            var transformerRepository = AppService.GetRequiredService<TransformerRepository>();
+            var modBusClientRepository = AppService.GetRequiredService<ModBusClientRepository>();
+            var deviceService = AppService.GetRequiredService<DeviceService>();
+            var transformerService = AppService.GetRequiredService<TransformerService>();
+            var transformers = AppService.GetRequiredService<IReadOnlyList<ITransformer>>();
+            await seeder.SeedAsync();
+
+            var clients = await modBusClientRepository.GetAllAsync();
+            var clientsById = clients.ToDictionary(c => c.Id);
+            foreach (var client in clients)
+                client.Start();
+
+            var projectEntities = await projectRepository.GetAllAsync();
+            var project = projectEntities.First();
+
+            AppService.Current!.InitializeTransformers();
+
+            var transformersDb = await transformerRepository.GetByProjectAsync(project.Id);
+           
+            foreach (var transformerDb in transformersDb)
             {
-                throw new InvalidOperationException($"Transformer with id {transformerDb.Id} not found");
+                var transformer = transformers.SingleOrDefault(s => s.Id == transformerDb.BelongToId);
+
+                if (transformer is null)
+                {
+                    throw new InvalidOperationException($"Transformer with id {transformerDb.Id} not found");
+                }
+
+                var calculationEngine = transformer.CreateInstance(transformerDb.Id, transformerDb.BelongToId,
+                    transformerDb.ProjectId,
+                    transformerDb.Name, transformerDb.Description, transformerDb.Data);
+
+                transformerService.AddTransformer(calculationEngine);
             }
-
-            var calculationEngine = transformer.CreateInstance(transformerDb.Id, transformerDb.BelongToId,
-                transformerDb.ProjectId,
-                transformerDb.Name, transformerDb.Description, transformerDb.Data);
-
-            transformerService.AddTransformer(calculationEngine);
-        }
         
-        var listOfDevices = await deviceRepository.GetByProjectAsync(project.Id, clientsById);
+            var listOfDevices = await deviceRepository.GetByProjectAsync(project.Id, clientsById);
 
-        foreach (var device in listOfDevices)
-        {
-            deviceService.AddDevice(device);
-
-            var listOfSensors = await sensorRepository.GetByDeviceAsync(device);
-
-            foreach (var sensor in listOfSensors)
+            foreach (var device in listOfDevices)
             {
-                device.AddSensor(sensor);
+                deviceService.AddDevice(device);
+
+                var listOfSensors = await sensorRepository.GetByDeviceAsync(device);
+
+                foreach (var sensor in listOfSensors)
+                {
+                    device.AddSensor(sensor);
+                }
+
+                device.Start();
             }
 
-            device.Start();
+
+
+            var currentProject = new Project(project.Id, project.Name, project.Description);
+            WeakReferenceMessenger.Default.Send<IOnProjectLoadedMessage>(new OnProjectLoadedMessage(currentProject));
         }
-
-
-
-        var currentProject = new Project(project.Id, project.Name, project.Description);
-        WeakReferenceMessenger.Default.Send<IOnProjectLoadedMessage>(new OnProjectLoadedMessage(currentProject));
+        catch (Exception e)
+        {
+            logger.LogError(e, "Error loading project");
+            throw new InvalidOperationException("Error loading project", e); 
+        }
     }
 
     // protected override async void OnStart()

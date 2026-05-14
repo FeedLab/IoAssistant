@@ -16,6 +16,7 @@ public class DatabaseSeeder(
 {
     public async Task SeedAsync()
     {
+        return ;
         await modBusClientRepository.InitializeAsync();
         await projectRepository.InitializeAsync();
         await deviceRepository.InitializeAsync();
@@ -78,7 +79,7 @@ public class DatabaseSeeder(
             new Sensor(modbusDeviceSensor52, "CO2", 5, new IoDirection(IoDirectionType.Input), "ppm", 0),
             modbusDeviceSensor52.Id);
 
-        var transformerEmaEntity = new TransformerEntity
+        var transformerEmaRecord = new TransformerRecord
         {
             Id = new Guid("8b2b7cfe-a09f-4e00-872c-9496aee89692"),
             Name = "EMA Transformer",
@@ -89,6 +90,6 @@ public class DatabaseSeeder(
             ProjectId = project.Id
         };
 
-        await transformerRepository.AddAsync(transformerEmaEntity);
+        await transformerRepository.AddAsync(transformerEmaRecord);
     }
 }

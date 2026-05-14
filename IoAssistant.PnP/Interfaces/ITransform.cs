@@ -26,8 +26,8 @@ public interface ICalculationEngine
     public decimal Alpha { get; set; }
     public int Period { get; set; }
 
-    public Guid Id { get; set; }
     public string Name { get; set; }
+    public string FullName { get; set; }
     public string Description { get; set; }
     public Guid BelongToId { get; set; }
     public Guid ProjectId { get; set; }
@@ -36,5 +36,4 @@ public interface ICalculationEngine
     public void FromJson(string json);
     public string ToJson();
 
-    void SelectedSensorChanger(ISensor sensor);
 }

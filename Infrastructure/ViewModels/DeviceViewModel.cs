@@ -113,7 +113,7 @@ public partial class ModbusDeviceViewModel : ObservableObject
                     logger.LogError(e, "Error in {Method}: {Message}", nameof(DeviceSensorViewModel),
                         e.Message);
 
-                    throw;
+                    throw new InvalidOperationException("Error in DeviceSensorViewModel", e);
                 }
             });
         });

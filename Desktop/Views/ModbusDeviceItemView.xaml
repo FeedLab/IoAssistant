@@ -13,9 +13,6 @@
             BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
             StrokeThickness="0"
             StrokeShape="RoundRectangle 6">
-        <Border.Shadow>
-            <Shadow Brush="Black" Offset="4,4" Radius="6" Opacity="0.2" />
-        </Border.Shadow>
 
         <Grid Padding="12,8"
               ColumnDefinitions="Auto,Auto,*,Auto"

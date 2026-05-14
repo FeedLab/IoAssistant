@@ -9,7 +9,8 @@
              xmlns:views="clr-namespace:IoAssistant.Device.Desktop.Views"
              x:Class="IoAssistant.Device.Desktop.Views.DeviceView">
 
-    <Grid>
+    <Grid
+        Padding="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -17,7 +18,7 @@
 
         <Border
             Grid.Column="0"
-            Margin="16"
+            Margin="8"
             Style="{StaticResource MainPanelBorder}"
             HorizontalOptions="Start">
 
@@ -40,7 +41,7 @@
 
         <Border
             Grid.Column="1"
-            Margin="16"
+            Margin="8"
             Style="{StaticResource MainPanelBorder}"
             HorizontalOptions="Fill">
 

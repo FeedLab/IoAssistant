@@ -15,9 +15,10 @@ public class EmaConfiguration : ITransformer
     public int Inputs { get; } = 1;
     public string Name { get; } = "EMA";
     public string Description { get; } = "Exponential Moving Average";
-    public ContentView Configuration { get; } = new EmaConfigurationView();
+    private ContentView? _configuration;
+    public ContentView Configuration => _configuration ??= new EmaConfigurationView();
     private IServiceCollection? services;
-    private ILogger<EmaConfiguration> logger;
+    private ILogger<EmaConfiguration>? logger;
 
     public EmaConfiguration()
     {

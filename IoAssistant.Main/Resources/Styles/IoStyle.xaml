@@ -21,7 +21,8 @@
         <Setter Property="HorizontalOptions" Value="Fill" />
         <Setter Property="VerticalOptions" Value="Fill" />
         <Setter Property="BackgroundColor" Value="White" />
-        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Stroke" Value="LightGray" />
+        <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Shadow" Value="{StaticResource PanelShadow}" />

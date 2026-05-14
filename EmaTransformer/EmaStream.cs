@@ -48,4 +48,10 @@ public class EmaStream
     }
 
     public decimal? Current => lastEma;
+    
+    public void Reset()
+    {
+        seedBuffer.Clear();
+        lastEma = null;
+    }
 }

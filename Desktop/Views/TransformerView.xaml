@@ -5,33 +5,66 @@
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
              x:Class="IoAssistant.Device.Desktop.Views.TransformerView">
 
-    <Grid>
+    <Grid
+        Margin="0"
+        VerticalOptions="Fill">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="10*"></ColumnDefinition>
+            <ColumnDefinition Width="10*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <syncfusion:SfDataGrid
-            Grid.Column="0"
-            HorizontalOptions="Fill"
-            ItemsSource="{Binding CalculationEngines}"
-            AutoGenerateColumnsMode="None"
-            SelectionMode="Single"
-            NavigationMode="Row"
-            ColumnWidthMode="LastColumnFill"
-            SelectionChanged="OnTransformerSelected">
 
-            <syncfusion:SfDataGrid.Columns>
-                <syncfusion:DataGridTextColumn MappingName="Name" HeaderText="Name" LineBreakMode="TailTruncation" Width="180" />
-                <syncfusion:DataGridTextColumn MappingName="Transformer.Inputs" HeaderText="Inputs" HeaderTextAlignment="Center" CellTextAlignment="Center"/>
-                <syncfusion:DataGridTextColumn MappingName="OriginalValue" HeaderText="Original Value" HeaderTextAlignment="Center" CellTextAlignment="Center" Format="N2"/>
-                <syncfusion:DataGridTextColumn MappingName="CalculatedValue" HeaderText="Calculated Value" HeaderTextAlignment="Center" CellTextAlignment="Center" Format="N2"/>
-                <syncfusion:DataGridTextColumn MappingName="Description" HeaderText="Description" LineBreakMode="TailTruncation"/>
-            </syncfusion:SfDataGrid.Columns>
-        </syncfusion:SfDataGrid>
+        <Border
+            Grid.Column="0"
+            Margin="8"
+            Padding="0"
+            Style="{StaticResource MainPanelBorder}">
+
+            <Grid   
+                Margin="0">
+
+                <syncfusion:SfDataGrid
+                    HorizontalOptions="Fill"
+                    ItemsSource="{Binding CalculationEngines}"
+                    AutoGenerateColumnsMode="None"
+                    SelectionMode="Single"
+                    NavigationMode="Row"
+                    ColumnWidthMode="LastColumnFill"
+                    SelectionChanged="OnTransformerSelected">
+
+                    <syncfusion:SfDataGrid.Columns>
+                        <syncfusion:DataGridTemplateColumn
+                            HeaderText="Name"
+                            MinimumWidth="220">
+                            <syncfusion:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid
+                                        Margin="8,0"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            Text="{Binding Name}"
+                                            LineBreakMode="TailTruncation"
+                                            ToolTipProperties.Text="{Binding FullName}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </syncfusion:DataGridTemplateColumn.CellTemplate>
+                        </syncfusion:DataGridTemplateColumn>
+
+                        <syncfusion:DataGridTextColumn MappingName="Transformer.Inputs" HeaderText="Inputs"
+                                                       HeaderTextAlignment="Center" CellTextAlignment="Center" />
+                        <syncfusion:DataGridTextColumn MappingName="OriginalValue" HeaderText="Original Value"
+                                                       HeaderTextAlignment="Center" CellTextAlignment="Center"
+                                                       Format="N2" />
+                        <syncfusion:DataGridTextColumn MappingName="CalculatedValue" HeaderText="Calculated Value"
+                                                       HeaderTextAlignment="Center" CellTextAlignment="Center"
+                                                       Format="N2" />
+                    </syncfusion:SfDataGrid.Columns>
+                </syncfusion:SfDataGrid>
+            </Grid>
+        </Border>
 
         <ContentView
             x:Name="TransformerPlaceholder"
-            Grid.Column="1"/>
+            Grid.Column="1" 
+            Margin="8"/>
     </Grid>
 </ContentView>
