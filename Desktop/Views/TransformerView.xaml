@@ -8,7 +8,7 @@
              x:Class="IoAssistant.Device.Desktop.Views.TransformerView">
 
     <Grid
-        Margin="0"
+        Margin="0,0,0,4"
         VerticalOptions="Fill">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10*"></ColumnDefinition>
@@ -17,7 +17,7 @@
 
         <Border
             Grid.Column="0"
-            Margin="8"
+            Margin="8,8,8,8"
             Padding="0"
             Style="{StaticResource MainPanelBorder}">
 
@@ -74,7 +74,7 @@
         <tabView:SfTabView
             Grid.Row="0"
             Grid.Column="1"
-            Padding="8"
+            Padding="0"
             IsClippedToBounds="False"
             TabBarPlacement="Top"
             IndicatorBackground="DarkGreen"

@@ -13,6 +13,7 @@
 
     <Grid
         VerticalOptions="Center"
+        HeightRequest="180"
         ColumnDefinitions="1*,1*">
 
         <VerticalStackLayout

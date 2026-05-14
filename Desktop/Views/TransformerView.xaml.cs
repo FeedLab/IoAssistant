@@ -1,4 +1,5 @@
-﻿using IoAssistant.Infrastructure.Services;
+﻿using System.Collections.Specialized;
+using IoAssistant.Infrastructure.Services;
 using IoAssistant.Infrastructure.ViewModels;
 using IoAssistant.PnP;
 using IoAssistant.PnP.Interfaces;
@@ -20,7 +21,9 @@ public partial class TransformerView : ContentView
         InitializeComponent();
 
         BindingContext = viewModel;
-        
+
+        viewModel.CalculationEngines.CollectionChanged += CalculationEngines_CollectionChanged;
+
         if (viewModel.SelectedTransformer is null)
         {
             logger.LogWarning("Selected transformer is null, cannot display configuration");
@@ -28,6 +31,20 @@ public partial class TransformerView : ContentView
         }
         
         TransformerPlaceholder.Content = viewModel.SelectedTransformer.Configuration;
+    }
+
+    private void CalculationEngines_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if(viewModel.SelectedTransformer == null)
+        {
+            if(e.NewItems is null)
+                return;
+
+            if (e.Action != NotifyCollectionChangedAction.Add)
+                return;
+
+            var selectedCalculationEngine = e.NewItems;
+        }
     }
 
     private void OnTransformerSelected(object sender, DataGridSelectionChangedEventArgs e)
