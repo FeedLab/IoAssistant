@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:gauge="clr-namespace:Syncfusion.Maui.Gauges;assembly=Syncfusion.Maui.Gauges"
+             xmlns:inputs="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:core="http://schemas.syncfusion.com/maui"
+             x:Class="IoAssistant.Transformers.EmaConfigurationComponent">
+
+    <ContentView.Resources>
+        <gauge:GaugeLabelStyle x:Key="LabelStyle" FontSize="14" />
+    </ContentView.Resources>
+
+    <Grid
+        VerticalOptions="Center"
+        ColumnDefinitions="1*,1*">
+
+        <VerticalStackLayout
+            Grid.Column="0"
+            VerticalOptions="Center">
+
+            <!-- Name Input -->
+            <VerticalStackLayout
+                Padding="0,0"
+                Spacing="10">
+
+                <core:SfTextInputLayout
+                    Hint="Name"
+                    HorizontalOptions="Fill"
+                    ContainerType="Outlined"
+                    FocusedStrokeThickness="4"
+                    UnfocusedStrokeThickness="2">
+
+                    <Entry
+                        HorizontalOptions="Fill"
+                        Placeholder="{Binding PlaceHolder}"
+                        Text="{Binding Name}" />
+                </core:SfTextInputLayout>
+
+            </VerticalStackLayout>
+            <core:SfTextInputLayout
+                Hint="Select sensor to act on"
+                ContainerType="Outlined"
+                FocusedStrokeThickness="4"
+                UnfocusedStrokeThickness="2">
+                <inputs:SfComboBox
+                    ItemsSource="{Binding Sensors}"
+                    SelectedItem="{Binding SensorToReactOn, Mode=TwoWay}"
+                    DisplayMemberPath="FullName"
+                    TextMemberPath="FullName"
+                    IsClearButtonVisible="False"
+                    HorizontalOptions="Fill">
+                    <inputs:SfComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding FullName}" FontAttributes="Bold" />
+                                <Label Text="{Binding Unit}" TextColor="Gray" Margin="10,0,0,0" />
+                            </HorizontalStackLayout>
+                        </DataTemplate>
+                    </inputs:SfComboBox.ItemTemplate>
+                </inputs:SfComboBox>
+            </core:SfTextInputLayout>
+
+        </VerticalStackLayout>
+
+        <gauge:SfRadialGauge
+            Grid.Column="1"
+            Margin="0,0,0,0"
+            HorizontalOptions="Center"
+            VerticalOptions="Start">
+            <gauge:SfRadialGauge.Axes>
+                <gauge:RadialAxis Minimum="0"
+                                  Maximum="1"
+                                  ShowLabels="False"
+                                  ShowAxisLine="False"
+                                  ShowTicks="False">
+
+                    <!-- Corrected ranges to match 0–1 axis -->
+                    <gauge:RadialAxis.Ranges>
+                        <gauge:RadialRange StartValue="0"
+                                           EndValue="0.33"
+                                           Label="Smoother"
+                                           WidthUnit="Factor"
+                                           StartWidth="0.35"
+                                           EndWidth="0.35"
+                                           LabelStyle="{StaticResource LabelStyle}"
+                                           Fill="#FF00AB47" />
+                        <gauge:RadialRange StartValue="0.33"
+                                           EndValue="0.66"
+                                           Label="Moderate"
+                                           WidthUnit="Factor"
+                                           StartWidth="0.35"
+                                           EndWidth="0.35"
+                                           LabelStyle="{StaticResource LabelStyle}"
+                                           Fill="#FFFFBA00" />
+                        <gauge:RadialRange StartValue="0.66"
+                                           EndValue="1"
+                                           Label="Faster"
+                                           WidthUnit="Factor"
+                                           StartWidth="0.35"
+                                           EndWidth="0.35"
+                                           LabelStyle="{StaticResource LabelStyle}"
+                                           Fill="#FFFE2A25" />
+                        <gauge:RadialRange StartValue="0"
+                                           EndValue="1"
+                                           WidthUnit="Factor"
+                                           StartWidth="0.15"
+                                           EndWidth="0.15"
+                                           OffsetUnit="Factor"
+                                           RangeOffset="0.50"
+                                           Fill="#4D9b9b9b" />
+                    </gauge:RadialAxis.Ranges>
+
+                    <!-- Interactive pointer -->
+                    <gauge:RadialAxis.Pointers>
+                        <!-- Needle shows the value -->
+                        <gauge:NeedlePointer Value="{Binding Alpha}"
+                                             EnableAnimation="True"
+                                             AnimationDuration="0.5"
+                                             NeedleLength="0.6"
+                                             NeedleStartWidth="2"
+                                             NeedleEndWidth="15"
+                                             KnobRadius="15"
+                                             KnobSizeUnit="Pixel" />
+
+                        <!-- ShapePointer lets user drag/tap -->
+                        <gauge:ShapePointer x:Name="InteractiveMarker"
+                                            Value="{Binding Alpha}"
+                                            IsInteractive="True"
+                                            ShapeType="Circle"
+                                            ShapeHeight="20"
+                                            ShapeWidth="20"
+                                            Fill="Orange"
+                                            Stroke="Black"
+                                            BorderWidth="1"
+                                            ValueChanged="InteractiveMarker_ValueChanged" />
+                    </gauge:RadialAxis.Pointers>
+                </gauge:RadialAxis>
+            </gauge:SfRadialGauge.Axes>
+        </gauge:SfRadialGauge>
+
+    </Grid>
+
+</ContentView>

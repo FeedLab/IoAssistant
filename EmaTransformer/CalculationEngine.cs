@@ -154,7 +154,7 @@ public partial class CalculationEngine : ObservableObject, ICalculationEngine
 
             WeakReferenceMessenger.Default.Send<IOnTransformerDataChangedMessage>(
                 new OnTransformerDataChangedMessage(this, CalculatedValue, OldValue,
-                    new List<ISensor> { SensorToReactOn }));
+                    new List<ISensor> { SensorToReactOn }, DateTime.Now));
         });
     }
 

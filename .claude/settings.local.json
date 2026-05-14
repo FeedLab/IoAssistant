@@ -30,7 +30,9 @@
       "Bash(/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Add-Type -Path ''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll'' -ErrorAction SilentlyContinue; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_.Name -like ''*Selection*'' } | ForEach-Object { $_.Name + '': '' + $_.EventHandlerType }\")",
       "Bash(/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Add-Type -Path ''C:\\\\Users\\\\jompa\\\\.nuget\\\\packages\\\\syncfusion.maui.inputs\\\\29.2.7\\\\lib\\\\net8.0\\\\Syncfusion.Maui.Inputs.dll'' -ErrorAction SilentlyContinue; [Syncfusion.Maui.Inputs.SfComboBox].GetEvents\\(\\) | Where-Object { $_.Name -like ''*Selection*'' } | ForEach-Object { $_.Name + '': '' + $_.EventHandlerType }\")",
       "Bash(grep -r Nullable D:/Git/IoAssistant/EmaTransformer/*.csproj D:/Git/IoAssistant/*.csproj)",
-      "Bash(grep -i selectionchanged /c/Users/jompa/.nuget/packages/syncfusion.maui.inputs/33.2.6/lib/*/Syncfusion.Maui.Inputs.xml)"
+      "Bash(grep -i selectionchanged /c/Users/jompa/.nuget/packages/syncfusion.maui.inputs/33.2.6/lib/*/Syncfusion.Maui.Inputs.xml)",
+      "Bash(find D:/Git/IoAssistant -name *Converter* -type f)",
+      "Bash(find D:/Git/IoAssistant -type f \\\\\\(-name *.cs -o -name *.xaml \\\\\\) ! -path */obj/* ! -path */bin/*)"
     ]
   }
 }

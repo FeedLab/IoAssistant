@@ -3,6 +3,8 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+             xmlns:tabView="clr-namespace:Syncfusion.Maui.TabView;assembly=Syncfusion.Maui.TabView"
              x:Class="IoAssistant.Device.Desktop.Views.TransformerView">
 
     <Grid
@@ -19,7 +21,7 @@
             Padding="0"
             Style="{StaticResource MainPanelBorder}">
 
-            <Grid   
+            <Grid
                 Margin="0">
 
                 <syncfusion:SfDataGrid
@@ -33,10 +35,9 @@
                     SelectionChanged="OnTransformerSelected">
 
                     <syncfusion:SfDataGrid.GroupColumnDescriptions>
-                        <syncfusion:GroupColumnDescription 
-                            ColumnName="SensorToReactOn.ModbusDevice.FullName" 
-                            SortGroupRecords="True" 
-                            />
+                        <syncfusion:GroupColumnDescription
+                            ColumnName="SensorToReactOn.ModbusDevice.FullName"
+                            SortGroupRecords="True" />
                     </syncfusion:SfDataGrid.GroupColumnDescriptions>
 
                     <syncfusion:SfDataGrid.Columns>
@@ -70,9 +71,38 @@
             </Grid>
         </Border>
 
-        <ContentView
-            x:Name="TransformerPlaceholder"
-            Grid.Column="1" 
-            Margin="8"/>
+        <tabView:SfTabView
+            Grid.Row="0"
+            Grid.Column="1"
+            Padding="8"
+            IsClippedToBounds="False"
+            TabBarPlacement="Top"
+            IndicatorBackground="DarkGreen"
+            TabWidthMode="SizeToContent">
+
+            <tabView:SfTabItem Header="Configuration">
+                <ScrollView
+                    Padding="12,0,24,0"
+                    IsClippedToBounds="False">
+                    <ContentView
+                        x:Name="TransformerPlaceholder"
+                        IsClippedToBounds="False" />
+                </ScrollView>
+            </tabView:SfTabItem>
+
+            <tabView:SfTabItem Header="Chart">
+                <chart:SfCartesianChart>
+                    <chart:SfCartesianChart.Legend>
+                        <chart:ChartLegend />
+                    </chart:SfCartesianChart.Legend>
+                    <chart:SfCartesianChart.XAxes>
+                        <chart:DateTimeAxis />
+                    </chart:SfCartesianChart.XAxes>
+                    <chart:SfCartesianChart.YAxes>
+                        <chart:NumericalAxis />
+                    </chart:SfCartesianChart.YAxes>
+                </chart:SfCartesianChart>
+            </tabView:SfTabItem>
+        </tabView:SfTabView>
     </Grid>
 </ContentView>

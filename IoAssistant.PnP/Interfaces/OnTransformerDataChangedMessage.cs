@@ -4,7 +4,8 @@ public class OnTransformerDataChangedMessage(
     ICalculationEngine calculationEngine,
     decimal oldValue,
     decimal calculatedValue,
-    IList<ISensor> sensorInputs)
+    IList<ISensor> sensorInputs,
+    DateTime timestamp)
     : IOnTransformerDataChangedMessage
 {
     public ICalculationEngine CalculationEngine { get; } = calculationEngine;
@@ -12,4 +13,6 @@ public class OnTransformerDataChangedMessage(
     public decimal CalculatedValue { get; } = calculatedValue;
     public IList<ISensor> SensorInputs { get; } = sensorInputs;
     public bool HasChanged => OldValue != CalculatedValue;
+    
+    public DateTime Timestamp => timestamp;
 }
