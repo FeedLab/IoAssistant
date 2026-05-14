@@ -28,6 +28,7 @@ public partial class CalculationEngine : ObservableObject, ICalculationEngine
 
     [ObservableProperty] private decimal calculatedValue;
     [ObservableProperty] private decimal originalValue;
+    [ObservableProperty] private decimal oldValue;
 
     public ITransformer Transformer { get; set; }
     public Guid ProjectId { get; set; }
@@ -144,13 +145,19 @@ public partial class CalculationEngine : ObservableObject, ICalculationEngine
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                OldValue = OriginalValue;
                 OriginalValue = m.Sensor.Value;
                 CalculatedValue = emaStream.AddPoint(m.Sensor.Value);
             });
 
             logger.LogDebug("EMA Value: {Value}", CalculatedValue);
+
+            WeakReferenceMessenger.Default.Send<IOnTransformerDataChangedMessage>(
+                new OnTransformerDataChangedMessage(this, CalculatedValue, OldValue,
+                    new List<ISensor> { SensorToReactOn }));
         });
     }
+
 
     private void SubscribeToOnSensorAddedMessage()
     {
